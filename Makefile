@@ -1,16 +1,13 @@
 # Makefile for chatd
 
-CFLAGS = -c -Wall
+CFLAGS = -Wall
 SOURCES = main.c
 OBJS = $(SOURCES:.c=.o)
 
-all: chatd
+all: clean chatd
 
 chatd: $(OBJS)
-	gcc $(OBJS) -o chatd
-
-main.o: main.c
-	gcc $(CFLAGS) main.c
+	cc $(OBJS) -o chatd
 
 clean:
 	rm -f *o chatd
