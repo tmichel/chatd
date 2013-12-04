@@ -30,6 +30,11 @@ void parse(const char *input, command_t *cmd) {
 
     cmd->code = code;
 
+    if (code == CMD_PARSE_ERROR) {
+        // on parse error do not parse the arguments
+        return;
+    }
+
     // only when there is a leftover
     if (cmd_len < input_len) {
         // do not copy the extra space after the command
