@@ -1,2 +1,7 @@
 chatd
+run_test
 obj/
+
+# generated files
+test/lib/runner.c
+test/lib/tests.h

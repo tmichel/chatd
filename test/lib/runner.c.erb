@@ -1,0 +1,15 @@
+#include "assert.h"
+#include "tests.h"
+
+
+void run_all_tests() {
+  <% test_methods.each do |t| %>
+    <%= t %>();
+  <% end %>
+}
+
+int main() {
+    run_all_tests();
+    done();
+    return 0;
+}
