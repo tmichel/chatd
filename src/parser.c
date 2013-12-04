@@ -29,7 +29,11 @@ void parse(const char *input, command_t *cmd) {
     size_t cmd_len = strlen(command_str);
 
     cmd->code = code;
-    // do not copy the extra space after the command
-    cmd->args = (char*)calloc(sizeof(char), input_len - cmd_len - 1);
-    strcpy(cmd->args, command_str + cmd_len + 1);
+
+    // only when there is a leftover
+    if (cmd_len < input_len) {
+        // do not copy the extra space after the command
+        cmd->args = (char*)calloc(sizeof(char), input_len - cmd_len - 1);
+        strcpy(cmd->args, command_str + cmd_len + 1);
+    }
 }

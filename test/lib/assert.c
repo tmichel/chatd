@@ -19,7 +19,7 @@ void pass() {
 
 void fail(const char *msg, char *file, int line) {
     printf("F\nin %s:%d %s\n", file, line, msg);
-    printf("Number of tests run: %d\n", passed_asserts+1);
+    printf("Number of asserts: %d\n", passed_asserts+1);
     exit(EXIT_SUCCESS);
 }
 
