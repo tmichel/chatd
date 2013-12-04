@@ -1,6 +1,6 @@
 # Makefile for chatd
 
-CFLAGS = -Wall
+CFLAGS = -Wall -pedantic
 SOURCES = main.c
 OBJS = $(SOURCES:.c=.o)
 
