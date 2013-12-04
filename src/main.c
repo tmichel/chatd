@@ -1,6 +1,8 @@
 #include <stdio.h>
 
 #include "server.h"
+#include "command.h"
+#include "parser.h"
 
 /* TODO: make these settable */
 #define PORT 3222
@@ -13,5 +15,6 @@ int main(int argc, char const *argv[])
     if (res != 0) {
         perror("Could not start server.");
     }
+
     return 0;
 }

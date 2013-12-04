@@ -1,13 +1,22 @@
 # Makefile for chatd
 
-CFLAGS = -Wall -pedantic -std=c99
-SOURCES = main.c server.c
-OBJS = $(SOURCES:.c=.o)
+SRCDIR = src
+OBJDIR = obj
 
-all: chatd
+CFLAGS = -Wall -pedantic -std=c99
+SOURCES = $(wildcard $(SRCDIR)/*.c)
+OBJS = $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+
+all: $(OBJDIR) chatd
 
 chatd: $(OBJS)
 	cc $(OBJS) -o chatd
+
+$(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
+	cc $(CFLAGS) -c $< -o $@
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 
 .PHONY: clean
 clean:
