@@ -18,7 +18,7 @@ open_serv_sock(const int port, const int max_conn) {
     /* create socket for ipv4 */
     if ((serv_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Could not create socket");
-        return 1;
+        return -1;
     }
 
     // get address to bind to
@@ -34,7 +34,7 @@ open_serv_sock(const int port, const int max_conn) {
     // listen on port
     if ((listen(serv_sock, max_conn)) < 0) {
         perror("Could not listen on socket");
-        return 1;
+        return -1;
     }
 
     return serv_sock;
@@ -43,6 +43,10 @@ open_serv_sock(const int port, const int max_conn) {
 int start_server(const int port, const int max_conn)
 {
     int serv_sock = open_serv_sock(port, max_conn);
+
+    if (serv_sock < 0) {
+        return 1;
+    }
 
     struct sockaddr_in remote_addr;
     socklen_t remote_addr_len = sizeof(remote_addr);
