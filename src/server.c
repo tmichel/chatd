@@ -11,6 +11,65 @@
 #include "util.h"
 
 #define MAX_DATA_SIZE 1024
+#define MAX_RESPONSE_SIZE 1024
+
+/**
+ * Handle incoming message from a client.
+ * Returns 1 if connection needs to be closed.
+ */
+static int handle_message(char *buf, size_t len, command_result_t *res);
+static int open_serv_sock(const int port, const int max_conn);
+static void send_response(int sock, command_result_t res);
+
+int start_server(const int port, const int max_conn)
+{
+    int serv_sock = open_serv_sock(port, max_conn);
+
+    if (serv_sock < 0) {
+        return 1;
+    }
+
+    struct sockaddr_in remote_addr;
+    socklen_t remote_addr_len = sizeof(remote_addr);
+
+    printf("Server started on %d port, waiting for connections...\n", port);
+
+    char buf[MAX_DATA_SIZE];
+
+    while(1) {
+        int remote_sock = accept(serv_sock, (struct sockaddr*)&remote_addr, &remote_addr_len);
+        if (remote_sock < 0) {
+            perror("Could not accept socket");
+            continue;
+        }
+
+        int len = 0;
+        int quit = 0;
+
+        while(!quit && (len = read(remote_sock, buf, sizeof(buf))) > 0) {
+            command_result_t res;
+            quit = handle_message(buf, len, &res);
+            send_response(remote_sock, res);
+            empty(buf, len);
+        }
+        printf("Client exited.\n");
+        close(remote_sock);
+    }
+
+    close(serv_sock);
+    return 0;
+}
+
+static void
+send_response(int sock, command_result_t res) {
+    char *response = calloc(sizeof(char), sizeof(char) * MAX_RESPONSE_SIZE);
+    int len = sprintf(response, "%d %s\n", res.code, res.msg);
+
+    if (write(sock, response, len) < 0) {
+        // TODO: log error
+    }
+    free(response);
+}
 
 static int
 open_serv_sock(const int port, const int max_conn) {
@@ -44,49 +103,23 @@ open_serv_sock(const int port, const int max_conn) {
     return serv_sock;
 }
 
-int start_server(const int port, const int max_conn)
-{
-    int serv_sock = open_serv_sock(port, max_conn);
+static int
+handle_message(char *buf, size_t len, command_result_t *res) {
+    int quit = 0;
 
-    if (serv_sock < 0) {
-        return 1;
+    command_t *cmd = new_command();
+    parse(buf, len, cmd);
+
+    // execute command
+    command_result_t result = command_execute(NULL, cmd);
+    res->code = result.code;
+    res->msg = result.msg;
+
+    if (cmd->code == CMD_EXIT) {
+        quit = 1;
     }
 
-    struct sockaddr_in remote_addr;
-    socklen_t remote_addr_len = sizeof(remote_addr);
+    free_command(cmd);
 
-    printf("Server started on %d port, waiting for connections...\n", port);
-
-    char buf[MAX_DATA_SIZE];
-
-    while(1) {
-        int remote_sock = accept(serv_sock, (struct sockaddr*)&remote_addr, &remote_addr_len);
-        if (remote_sock < 0) {
-            perror("Could not accept socket");
-            continue;
-        }
-
-        int len = 0;
-        int quit = 0;
-
-        // echo back.
-        while(!quit && (len = read(remote_sock, buf, sizeof(buf))) > 0) {
-
-            command_t *cmd = new_command();
-            parse(buf, len, cmd);
-
-            if (cmd->code == CMD_EXIT) {
-                quit = 1;
-            }
-            free_command(cmd);
-
-            write(STDOUT_FILENO, buf, len);
-            empty(buf, len);
-        }
-        printf("Done.\n");
-        close(remote_sock);
-    }
-
-    close(serv_sock);
-    return 0;
+    return quit;
 }

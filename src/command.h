@@ -39,7 +39,7 @@
  * Command results;
  * Values are >= 100
  */
-#define CMM_RES_OK                100
+#define CMD_RES_OK                100
 #define CMD_RES_PARSE_ERR         101
 #define CMD_RES_USER_INV_PASS     102
 
@@ -61,6 +61,11 @@ command_t* new_command();
 
 // Frees the command struct and its content
 void free_command(command_t* cmd);
+
+/**
+ * Execute command.
+ */
+command_result_t command_execute(user_t *user, command_t *cmd);
 
 // User registration.
 command_result_t user_reg(const command_t *cmd);
