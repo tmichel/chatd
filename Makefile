@@ -10,7 +10,7 @@ OBJS = $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 all: $(OBJDIR) chatd
 
-chatd: $(OBJS) main
+chatd: $(OBJS) obj/main.o
 	cc $(OBJS) obj/main.o -o chatd
 
 $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
@@ -19,7 +19,7 @@ $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
-main:
+obj/main.o:
 	cc $(CFLAGS) -c src/main.c -o obj/main.o
 
 .PHONY: clean
