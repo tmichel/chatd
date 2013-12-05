@@ -56,8 +56,10 @@ typedef struct
     char *args;
 } command_t;
 
+// Instantiates a new command struct.
 command_t* new_command();
 
+// Frees the command struct and its content
 void free_command(command_t* cmd);
 
 // User registration.

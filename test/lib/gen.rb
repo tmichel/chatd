@@ -10,7 +10,7 @@ class TestTemplate
     @test_methods = Dir["#{dir}/**/*_test.c"].map do |tf|
       c = File.read tf
       c.scan /^void (test_.*)\(\)/
-    end.flatten
+    end.flatten.shuffle
   end
 
   def render(template)

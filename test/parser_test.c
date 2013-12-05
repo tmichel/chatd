@@ -42,6 +42,13 @@ void test_parse_exit() {
     teardown();
 }
 
+void test_parse_exit_with_line_feed() {
+    setup();
+    parse("EXIT\n", cmd);
+    assert("Command code is not CMD_EXIT", CMD_EXIT == cmd->code);
+    assert("Command arguments is not nil", NULL == cmd->args);
+    teardown();
+}
 
 void test_parse_pwd() {
     setup();

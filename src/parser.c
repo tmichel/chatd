@@ -1,10 +1,16 @@
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "parser.h"
+#include "util.h"
+
 
 static command_code_t
-parse_command(char *command) {
+parse_command(const char *cmd_in) {
+    char *command = calloc(sizeof(char), sizeof(char) * 10);
+    trim(cmd_in, command);
+
     if (strcmp(command, CMD_REG_STR) == 0) {
         return CMD_REG;
     }
@@ -15,6 +21,7 @@ parse_command(char *command) {
         return CMD_PWD;
     }
 
+    free(command);
     return CMD_PARSE_ERROR;
 }
 

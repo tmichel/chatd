@@ -29,5 +29,5 @@ clean:
 
 test: $(OBJS)
 	ruby ./test/lib/gen.rb
-	cc -o run_test $(OBJS) test/*.c test/lib/*.c
+	cc -std=c99 -o run_test $(OBJS) test/*.c test/lib/*.c
 	./run_test
