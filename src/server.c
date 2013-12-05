@@ -8,6 +8,7 @@
 #include "server.h"
 #include "command.h"
 #include "parser.h"
+#include "util.h"
 
 #define MAX_DATA_SIZE 1024
 
@@ -27,6 +28,9 @@ open_serv_sock(const int port, const int max_conn) {
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     serv_addr.sin_port = htons(port);
+
+    int reuse = 1;
+    setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
 
     // bind to address
     bind(serv_sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
@@ -66,17 +70,18 @@ int start_server(const int port, const int max_conn)
         int quit = 0;
 
         // echo back.
-        while((len = read(remote_sock, buf, sizeof(buf))) > 0) {
+        while(!quit && (len = read(remote_sock, buf, sizeof(buf))) > 0) {
 
             command_t *cmd = new_command();
-            printf("%d\n", cmd->code);
             parse(buf, len, cmd);
+
             if (cmd->code == CMD_EXIT) {
-                printf("YAY\n");
+                quit = 1;
             }
             free_command(cmd);
 
             write(STDOUT_FILENO, buf, len);
+            empty(buf, len);
         }
         printf("Done.\n");
         close(remote_sock);
