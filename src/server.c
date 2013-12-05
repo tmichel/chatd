@@ -69,8 +69,8 @@ int start_server(const int port, const int max_conn)
         while((len = read(remote_sock, buf, sizeof(buf))) > 0) {
 
             command_t *cmd = new_command();
-            parse(buf, cmd);
             printf("%d\n", cmd->code);
+            parse(buf, len, cmd);
             if (cmd->code == CMD_EXIT) {
                 printf("YAY\n");
             }

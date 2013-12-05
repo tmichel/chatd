@@ -11,6 +11,6 @@
 /*
  * Parse the raw input into a command_t struct.
  */
-void parse(const char *input, command_t *cmd);
+void parse(const char *input, size_t len, command_t *cmd);
 
 #endif

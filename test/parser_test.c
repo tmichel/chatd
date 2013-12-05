@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "lib/assert.h"
 #include "lib/tests.h"
@@ -17,7 +18,9 @@ static void teardown() {
 void test_parse_reg() {
     setup();
 
-    parse("REG test pass", cmd);
+    char *text = "REG test pass";
+    size_t len = strlen(text);
+    parse(text, len, cmd);
     assert("command code is not CMD_REG", CMD_REG == cmd->code);
     assert_eq_str("test pass", cmd->args);
 
@@ -27,7 +30,9 @@ void test_parse_reg() {
 void test_parse_error() {
     setup();
 
-    parse("NOT hello world", cmd);
+    char *text = "NOT hello world";
+    size_t len = strlen(text);
+    parse(text, len, cmd);
     assert("Command code is not CMD_PARSE_ERROR", CMD_PARSE_ERROR == cmd->code);
     assert("Command arguments is not nil", NULL == cmd->args);
 
@@ -36,7 +41,11 @@ void test_parse_error() {
 
 void test_parse_exit() {
     setup();
-    parse("EXIT", cmd);
+
+    char *text = "EXIT";
+    size_t len = strlen(text);
+    parse(text, len, cmd);
+
     assert("Command code is not CMD_EXIT", CMD_EXIT == cmd->code);
     assert("Command arguments is not nil", NULL == cmd->args);
     teardown();
@@ -44,16 +53,33 @@ void test_parse_exit() {
 
 void test_parse_exit_with_line_feed() {
     setup();
-    parse("EXIT\n", cmd);
+
+    char *text = "EXIT\n";
+    size_t len = strlen(text);
+    parse(text, len, cmd);
     assert("Command code is not CMD_EXIT", CMD_EXIT == cmd->code);
     assert("Command arguments is not nil", NULL == cmd->args);
+    teardown();
+}
+
+void test_parse_exit_with_line_ending() {
+    setup();
+
+    char *text = "EXIT\r\n";
+    size_t len = strlen(text);
+    parse(text, len, cmd);
+
+    assert("Command code is not CMD_EXIT", CMD_EXIT == cmd->code);
+
     teardown();
 }
 
 void test_parse_pwd() {
     setup();
 
-    parse("PWD new old", cmd);
+    char *text = "PWD new old";
+    size_t len = strlen(text);
+    parse(text, len, cmd);
     assert("command code is not CMD_PWD", CMD_PWD == cmd->code);
     assert_eq_str("new old", cmd->args);
 

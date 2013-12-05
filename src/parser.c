@@ -25,9 +25,8 @@ parse_command(const char *cmd_in) {
     return CMD_PARSE_ERROR;
 }
 
-void parse(const char *input, command_t *cmd) {
-    size_t input_len = strlen(input);
-    char input_t[input_len];
+void parse(const char *input, size_t len, command_t *cmd) {
+    char input_t[len];
 
     strcpy(input_t, input);
     char* command_str = strtok(input_t, COMMAND_DELIM);
@@ -43,9 +42,9 @@ void parse(const char *input, command_t *cmd) {
     }
 
     // only when there is a leftover
-    if (cmd_len < input_len) {
+    if (cmd_len < len) {
         // do not copy the extra space after the command
-        cmd->args = (char*)calloc(sizeof(char), input_len - cmd_len - 1);
+        cmd->args = (char*)calloc(sizeof(char), len - cmd_len - 1);
         strcpy(cmd->args, command_str + cmd_len + 1);
     }
 }
