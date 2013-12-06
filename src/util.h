@@ -7,4 +7,6 @@ void trim(const char *str, char *dest);
 
 void empty(char *str, int len);
 
+void rand_str(char *s, const int len);
+
 #endif

@@ -1,5 +1,6 @@
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 #include "util.h"
 
@@ -27,4 +28,17 @@ void empty(char *str, int len) {
     for (int i = 0; i < len; i++) {
         str[i] = 0;
     }
+}
+
+void rand_str(char *s, const int len) {
+    static const char alphanum[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+
+    for (int i = 0; i < len; ++i) {
+        s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
+    }
+
+    s[len] = 0;
 }
