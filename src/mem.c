@@ -49,10 +49,28 @@ mem_lookup_user(const char *username, user_t **user) {
 
 mem_res
 mem_store_room(room_t *room) {
+    if (last_room >= MAX_ROOM_COUNT) {
+        return MEM_FULL;
+    }
+
+    rooms[last_room] = room;
+    ++last_room;
+
     return MEM_OK;
 }
 
 mem_res
 mem_lookup_room(const char *room_name, room_t **room) {
+
+    room_t *r;
+
+    for (int i = 0; i < last_room; ++i) {
+        r = rooms[i];
+        if (strcmp(room_name, r->name) == 0) {
+            *room = r;
+            return MEM_OK;
+        }
+    }
+
     return MEM_NOTFOUND;
 }
