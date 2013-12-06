@@ -118,8 +118,7 @@ handle_message(char *buf, size_t len, command_result_t *res) {
 
 static void
 handle_conn(int client_sock) {
-    char buf[MAX_DATA_SIZE];
-    empty(buf, MAX_DATA_SIZE);
+    char buf[MAX_DATA_SIZE] = {0};
 
     int len = 0;
     int quit = 0;
