@@ -2,11 +2,15 @@
 
 SRCDIR = src
 OBJDIR = obj
+TESTDIR = test
+TESTOUTDIR = test_ex
 
 CFLAGS = -Wall -pedantic -std=gnu99
 SOURCES = $(wildcard $(SRCDIR)/*.c)
 SOURCES := $(filter-out src/main.c, $(SOURCES))
+TESTSRC = $(wildcard $(TESTDIR)/*_test.c)
 OBJS = $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+TEST_O = $(TESTSRC:$(TESTDIR)/%.c=$(TESTOUTDIR)/%)
 
 all: $(OBJDIR) chatd
 
@@ -24,10 +28,16 @@ obj/main.o:
 
 .PHONY: clean
 clean:
-	-rm -f chatd $(OBJS) obj/main.o
-	-rm -f run_test
+	-rm -rf $(OBJDIR)
+	-rm -rf $(TESTOUTDIR)
 
-test: $(OBJS)
-	ruby ./test/lib/gen.rb
-	cc -std=c99 -o run_test $(OBJS) test/*.c test/lib/*.c
-	./run_test
+# for testing
+
+$(TESTOUTDIR):
+	@mkdir -p $(TESTOUTDIR)
+
+$(TEST_O): $(TESTOUTDIR)/% : $(TESTDIR)/%.c
+	@cc $(CFLAGS) $(OBJS) test/assert.c $< -o $@
+
+test: $(OBJDIR) $(TESTOUTDIR) $(OBJS) $(TEST_O)
+	@$(foreach t,$(shell ls $(TESTOUTDIR)), echo $(t); ./$(TESTOUTDIR)/$(t); echo;)
