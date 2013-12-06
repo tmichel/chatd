@@ -91,7 +91,7 @@ make_result(command_result_t *res, command_code_t code, char *msg) {
     res->code = code;
 
     int len = strlen(msg);
-    res->msg = (char*)calloc(sizeof(char), sizeof(char) * len);
+    res->msg = (char*)calloc(sizeof(char), sizeof(char) * (len + 1));
     strcpy(res->msg, msg);
 }
 
