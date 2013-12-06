@@ -11,6 +11,7 @@ static void make_result(command_result_t *res, command_code_t code, char *msg);
 static void command_ok(command_result_t *res, char *msg);
 static void command_err(command_result_t *res, char *msg);
 static void command_parse_error(command_result_t *res);
+static int parse_token(const command_t *cmd, char **token, char **saveptr, command_result_t *res);
 
 command_t*
 new_command() {
@@ -98,14 +99,11 @@ user_reg(const command_t *cmd) {
 command_result_t
 user_join(user_t * const user, const command_t *cmd) {
     char *saveptr = NULL;
-    char *token;
+    char *token = NULL;
     char *room_name;
     command_result_t res;
 
-    token = strtok_r(cmd->args, COMMAND_DELIM, &saveptr);
-    if (token == NULL) {
-        // error: no token.
-        command_parse_error(&res);
+    if (!parse_token(cmd, &token, &saveptr, &res)) {
         return res;
     }
 
@@ -144,6 +142,21 @@ user_join(user_t * const user, const command_t *cmd) {
     sprintf(msg, "Joined %s room.", room_name);
     command_ok(&res, msg);
     return res;
+}
+
+static int
+parse_token(const command_t *cmd, char **token, char **saveptr, command_result_t *res) {
+    char *tok;
+
+    tok = strtok_r(cmd->args, COMMAND_DELIM, saveptr);
+    if (tok == NULL) {
+        // error: no tok.
+        command_parse_error(res);
+        return 0;
+    }
+
+    *token = tok;
+    return 1;
 }
 
 static void
