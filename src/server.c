@@ -17,6 +17,7 @@
  * Handle incoming message from a client.
  * Returns 1 if connection needs to be closed.
  */
+static void handle_conn(int client_sock);
 static int handle_message(char *buf, size_t len, command_result_t *res);
 static int open_serv_sock(const int port, const int max_conn);
 static void send_response(int sock, command_result_t res);
@@ -38,24 +39,9 @@ int start_server(const int port, const int max_conn)
     empty(buf, MAX_DATA_SIZE);
 
     while(1) {
-        int remote_sock = accept(serv_sock, (struct sockaddr*)&remote_addr, &remote_addr_len);
-        if (remote_sock < 0) {
-            perror("Could not accept socket");
-            continue;
-        }
-
-        int len = 0;
-        int quit = 0;
-
-        while(!quit && (len = read(remote_sock, buf, sizeof(buf))) > 0) {
-            command_result_t res;
-            quit = handle_message(buf, len, &res);
-            send_response(remote_sock, res);
-            free(res.msg);
-            empty(buf, len);
-        }
-        printf("Client exited.\n");
-        close(remote_sock);
+        int client_sock = accept(serv_sock, (struct sockaddr*)&remote_addr, &remote_addr_len);
+        // TODO: log client info
+        handle_conn(client_sock);
     }
 
     close(serv_sock);
@@ -124,4 +110,25 @@ handle_message(char *buf, size_t len, command_result_t *res) {
     free_command(cmd);
 
     return quit;
+}
+
+static void
+handle_conn(int client_sock) {
+    if (client_sock < 0) {
+        perror("Could not accept socket");
+        continue;
+    }
+
+    int len = 0;
+    int quit = 0;
+
+    while(!quit && (len = read(client_sock, buf, sizeof(buf))) > 0) {
+        command_result_t res;
+        quit = handle_message(buf, len, &res);
+        send_response(client_sock, res);
+        free(res.msg);
+        empty(buf, len);
+    }
+    printf("Client exited.\n");
+    close(client_sock);
 }

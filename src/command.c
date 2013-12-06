@@ -35,6 +35,8 @@ command_execute(user_t *user, command_t *cmd) {
     switch (cmd->code) {
     case CMD_REG:
         return user_reg(cmd);
+    case CMD_JOIN:
+        return user_join(user, cmd);
     default:
         command_parse_error(&res);
     }
