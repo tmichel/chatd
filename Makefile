@@ -3,7 +3,7 @@
 SRCDIR = src
 OBJDIR = obj
 
-CFLAGS = -Wall -pedantic -std=c99
+CFLAGS = -Wall -pedantic -std=gnu99
 SOURCES = $(wildcard $(SRCDIR)/*.c)
 SOURCES := $(filter-out src/main.c, $(SOURCES))
 OBJS = $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
