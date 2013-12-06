@@ -1,7 +1,6 @@
 #include "assert.h"
 
 #include "../src/user.h"
-#include "../src/user.h"
 #include "../src/command.h"
 #include "../src/mem.h"
 
@@ -63,6 +62,14 @@ void test_user_reg_twice(test_t *t) {
     free(cmd2.args);
 }
 
+void test_execute_command_without_user(test_t *t) {
+    command_t *c = new_command();
+    c->code = CMD_TALK;
+    command_result_t res = command_execute(NULL, c);
+
+    assert_eq_int(t, CMD_RES_NO_USR, res.code);
+}
+
 #define TEST_COUNT 100
 
 int main() {
@@ -71,6 +78,7 @@ int main() {
     tests[0] = test(test_user_reg_without_password);
     tests[1] = test(test_user_reg_with_without_args);
     tests[2] = test(test_user_reg_twice);
+    tests[3] = test(test_execute_command_without_user);
 
     for (int i = 0; i < TEST_COUNT && tests[i] != NULL; ++i)
     {
@@ -81,5 +89,4 @@ int main() {
 
     print_stats(tests, TEST_COUNT);
     return 0;
-
 }

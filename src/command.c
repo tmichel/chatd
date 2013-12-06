@@ -31,6 +31,12 @@ command_result_t
 command_execute(user_t * const user, command_t *cmd) {
     command_result_t res;
 
+    // everything needs a user except REG
+    if (cmd->code != CMD_REG && user == NULL) {
+        make_result(&res, CMD_RES_NO_USR, "No user found for connection.");
+        return res;
+    }
+
     switch (cmd->code) {
     case CMD_REG:
         return user_reg(cmd);
@@ -95,12 +101,6 @@ user_join(user_t * const user, const command_t *cmd) {
     char *token;
     char *room_name;
     command_result_t res;
-
-    // before doing anything check if user exists
-    if (user == NULL) {
-        make_result(&res, CMD_RES_NO_USR, "No user found for connection.");
-        return res;
-    }
 
     token = strtok_r(cmd->args, COMMAND_DELIM, &saveptr);
     if (token == NULL) {

@@ -14,11 +14,6 @@ void set_cmd_args(command_t *c, char *msg) {
     strcpy(c->args, msg);
 }
 
-void test_join_without_active_user(test_t *t) {
-    command_result_t res = user_join(NULL, NULL);
-    assert_eq_int(t, CMD_RES_NO_USR, res.code);
-}
-
 void test_join_without_valid_token(test_t *t) {
     user_t *u = new_user();
     command_t *c = new_command();
@@ -76,11 +71,10 @@ void test_join_new_room(test_t *t) {
 int main()
 {
     test_t *tests[TEST_COUNT] = { NULL };
-    tests[0] = test(test_join_without_active_user);
-    tests[1] = test(test_join_without_valid_token);
-    tests[2] = test(test_join_without_token);
-    tests[3] = test(test_join_existing_room);
-    tests[4] = test(test_join_new_room);
+    tests[0] = test(test_join_without_valid_token);
+    tests[1] = test(test_join_without_token);
+    tests[2] = test(test_join_existing_room);
+    tests[3] = test(test_join_new_room);
 
     for (int i = 0; i < TEST_COUNT && tests[i] != NULL; ++i)
     {
