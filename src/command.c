@@ -99,6 +99,7 @@ user_join(user_t * const user, const command_t *cmd) {
     // before doing anything check if user exists
     if (user == NULL) {
         make_result(&res, CMD_RES_NO_USR, "No user found for connection.");
+        return res;
     }
 
     token = strtok_r(cmd->args, COMMAND_DELIM, &saveptr);
