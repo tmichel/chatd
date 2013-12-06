@@ -39,16 +39,17 @@
  *
  * JOIN token room
  */
-#define CMD_JOIN 4;
+#define CMD_JOIN 4
 #define CMD_JOIN_STR "JOIN"
 
 /*
  * Command results;
  * Values are >= 100
  */
-#define CMD_RES_OK  100
-#define CMD_RES_ERR 101
+#define CMD_RES_OK      100
+#define CMD_RES_ERR     101
 #define CMD_RES_INV_TOK 102
+#define CMD_RES_NO_USR  103
 
 typedef int command_code_t;
 
@@ -72,7 +73,7 @@ void free_command(command_t* cmd);
 /**
  * Execute command.
  */
-command_result_t command_execute(user_t *user, command_t *cmd);
+command_result_t command_execute(user_t * const user, command_t *cmd);
 
 /*
  * User registration.
@@ -92,6 +93,6 @@ command_result_t user_exit(user_t* const user, const command_t *cmd);
 /*
  * Join room.
  */
-command_result_t user_join(const user_t* user, const command_t *cmd);
+command_result_t user_join(user_t* const user, const command_t *cmd);
 
 #endif

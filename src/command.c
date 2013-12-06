@@ -27,9 +27,8 @@ free_command(command_t* cmd) {
     free(cmd);
 }
 
-
 command_result_t
-command_execute(user_t *user, command_t *cmd) {
+command_execute(user_t * const user, command_t *cmd) {
     command_result_t res;
 
     switch (cmd->code) {
@@ -91,11 +90,16 @@ user_reg(const command_t *cmd) {
 }
 
 command_result_t
-user_join(const user_t *user, const command_t *cmd) {
+user_join(user_t * const user, const command_t *cmd) {
     char *saveptr = NULL;
     char *token;
     char *room_name;
     command_result_t res;
+
+    // before doing anything check if user exists
+    if (user == NULL) {
+        make_result(&res, CMD_RES_NO_USR, "No user found for connection.");
+    }
 
     token = strtok_r(cmd->args, COMMAND_DELIM, &saveptr);
     if (token == NULL) {

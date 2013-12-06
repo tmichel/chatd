@@ -35,11 +35,15 @@ int start_server(const int port, const int max_conn)
 
     printf("Server started on %d port, waiting for connections...\n", port);
 
-    char buf[MAX_DATA_SIZE];
-    empty(buf, MAX_DATA_SIZE);
 
     while(1) {
         int client_sock = accept(serv_sock, (struct sockaddr*)&remote_addr, &remote_addr_len);
+
+        if (client_sock < 0) {
+            perror("Could not accept socket");
+            continue;
+        }
+
         // TODO: log client info
         handle_conn(client_sock);
     }
@@ -114,10 +118,8 @@ handle_message(char *buf, size_t len, command_result_t *res) {
 
 static void
 handle_conn(int client_sock) {
-    if (client_sock < 0) {
-        perror("Could not accept socket");
-        continue;
-    }
+    char buf[MAX_DATA_SIZE];
+    empty(buf, MAX_DATA_SIZE);
 
     int len = 0;
     int quit = 0;

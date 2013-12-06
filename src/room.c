@@ -28,7 +28,7 @@ room_free(room_t *room) {
 }
 
 void
-room_add_user(room_t *room, user_t *user, int is_admin) {
+room_add_user(room_t *room, user_t * const user, int is_admin) {
     vec_add(room->users, user);
     if(is_admin) {
         vec_add(room->admins, user);
