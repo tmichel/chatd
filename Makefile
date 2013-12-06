@@ -37,7 +37,11 @@ $(TESTOUTDIR):
 	@mkdir -p $(TESTOUTDIR)
 
 $(TEST_O): $(TESTOUTDIR)/% : $(TESTDIR)/%.c
-	@cc $(CFLAGS) $(OBJS) test/assert.c $< -o $@
+	cc $(CFLAGS) $(OBJS) test/assert.c $< -o $@
 
-test: $(OBJDIR) $(TESTOUTDIR) $(OBJS) $(TEST_O)
-	@$(foreach t,$(shell ls $(TESTOUTDIR)), echo $(t); ./$(TESTOUTDIR)/$(t); echo;)
+test: test-compile test-run
+
+test-compile: $(OBJDIR) $(TESTOUTDIR) $(OBJS) $(TEST_O)
+
+test-run:
+	@$(foreach t,$(shell ls $(TESTOUTDIR)), echo "$(t):"; ./$(TESTOUTDIR)/$(t); echo;)

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+FILE="test/$1_test.c"
+if [[ -f $FILE ]]; then
+    echo "$FILE already exists"
+    exit
+fi
+
+cat <<EOL > ./test/$1_test.c
+#include <stdlib.h>
+#include "assert.h"
+
+#define TEST_COUNT 100
+
+void test_the_truth(test_t *t) {
+    assert(t, "One is not true", 1);
+}
+
+int main()
+{
+    test_t *tests[TEST_COUNT] = { NULL };
+    tests[0] = test(test_the_truth);
+
+    for (int i = 0; i < TEST_COUNT && tests[i] != NULL; ++i)
+    {
+        test_t *t = tests[i];
+        t->t(t);
+        eval(t);
+    }
+
+    print_stats(tests, TEST_COUNT);
+    return 0;
+}
+EOL
+
+echo "Created $FILE"
