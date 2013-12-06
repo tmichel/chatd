@@ -27,7 +27,8 @@ void eval(test_t *t) {
 void print_stats(test_t **tests, int count) {
     printf("\n\n");
     int failed_count = 0;
-    for (int i = 0; i < count && tests[i] != NULL; ++i)
+    int i;
+    for (i = 0; i < count && tests[i] != NULL; ++i)
     {
         test_t *test = tests[i];
 
@@ -38,9 +39,9 @@ void print_stats(test_t **tests, int count) {
     }
 
     if (failed_count > 0) {
-        printf("%d test(s) failed.\n", failed_count);
+        printf("%d tests failed out of %d.\n", failed_count, i);
     } else {
-        printf("All tests passed.\n");
+        printf("All (%d) tests passed.\n", i);
     }
 }
 
