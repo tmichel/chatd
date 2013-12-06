@@ -22,6 +22,22 @@ void _assert_eq_str(char* exp, char* act, char *file, int line) {
     _assert(msg, strcmp(exp, act) == 0, file, line);
 }
 
+void _assert_eq_int(int exp, int act, char *file, int line) {
+    char msg[1000];
+    sprintf(msg,
+            "Integer assertion failed.\n\texpected: %d\n\tactual: %d",
+            exp, act);
+    _assert(msg, exp == act, file, line);
+}
+
+void _assert_neq_int(int exp, int act, char *file, int line) {
+    char msg[1000];
+    sprintf(msg,
+            "Integer assertion failed.\n\texpected %d not be %d.",
+            exp, act);
+    _assert(msg, exp != act, file, line);
+}
+
 void pass() {
     printf(".");
     ++passed_asserts;
