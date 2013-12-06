@@ -46,3 +46,13 @@ mem_lookup_user(const char *username, user_t **user) {
 
     return MEM_NOTFOUND;
 }
+
+mem_res
+mem_store_room(room_t *room) {
+    return MEM_OK;
+}
+
+mem_res
+mem_lookup_room(const char *room_name, room_t **room) {
+    return MEM_NOTFOUND;
+}
