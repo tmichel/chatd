@@ -8,8 +8,8 @@
 int last_usr;
 int last_room;
 // TODO: use vectors here
-user_t *users[MAX_USER_COUNT];
-room_t *rooms[MAX_ROOM_COUNT];
+user_t *users[MAX_USER_COUNT] = {NULL};
+room_t *rooms[MAX_ROOM_COUNT] = {NULL};
 
 mem_res
 mem_init() {
