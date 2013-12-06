@@ -27,6 +27,17 @@ void test_parse_reg() {
     teardown();
 }
 
+void test_parse_reg_without_args() {
+    setup();
+
+    char text[4] = "REG\n";
+    // size_t len = strlen(text);
+    parse(text, 4, cmd);
+    assert_eq_int(CMD_REG, cmd->code);
+
+    teardown();
+}
+
 void test_parse_error() {
     setup();
 

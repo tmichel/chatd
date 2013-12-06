@@ -1,10 +1,8 @@
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
 
 #include "parser.h"
 #include "util.h"
-
 
 static command_code_t
 parse_command(const char *cmd_in) {
@@ -25,11 +23,16 @@ parse_command(const char *cmd_in) {
     return CMD_PARSE_ERROR;
 }
 
-void parse(const char *input, size_t len, command_t *cmd) {
-    char input_t[len];
+void
+parse(const char *input, size_t len, command_t *cmd) {
+    char *input_t = (char*)calloc(sizeof(char), sizeof(char) * (len+1));
+    char *saveptr = 0;
 
-    strcpy(input_t, input);
-    char* command_str = strtok(input_t, COMMAND_DELIM);
+    for (int i = 0; i < len; ++i) {
+        input_t[i] = input[i];
+    }
+
+    char *command_str = strtok_r(input_t, COMMAND_DELIM, &saveptr);
 
     command_code_t code = parse_command(command_str);
     size_t cmd_len = strlen(command_str);
@@ -45,6 +48,8 @@ void parse(const char *input, size_t len, command_t *cmd) {
     if (cmd_len < len) {
         // do not copy the extra space after the command
         cmd->args = (char*)calloc(sizeof(char), len - cmd_len - 1);
-        strcpy(cmd->args, command_str + cmd_len + 1);
+        trim(command_str + cmd_len + 1, cmd->args);
     }
+
+    free(input_t);
 }
