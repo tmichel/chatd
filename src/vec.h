@@ -3,8 +3,6 @@
 
 typedef void* any_t;
 
-typedef void (*dtor)(any_t);
-
 typedef struct
 {
     int len;
@@ -12,9 +10,9 @@ typedef struct
     any_t *data;
 } vec_t;
 
-vec_t *new_vec();
+vec_t *vec_new();
 
-void free_vec(vec_t *vec, dtor destroy);
+void vec_free(vec_t *vec);
 
 void vec_add(vec_t *vec, any_t value);
 

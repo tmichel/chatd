@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-vec_t *new_vec() {
+vec_t *vec_new() {
     vec_t *vec = (vec_t*)malloc(sizeof(vec_t*));
     vec->len = 0;
     vec->cap = 10;
@@ -12,10 +12,7 @@ vec_t *new_vec() {
     return vec;
 }
 
-void free_vec(vec_t *vec, dtor destroy) {
-    for (int i = 0; i < vec->len; ++i) {
-        destroy(vec->data[i]);
-    }
+void vec_free(vec_t *vec) {
     free(vec->data);
     free(vec);
 }
