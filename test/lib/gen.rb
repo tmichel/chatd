@@ -11,6 +11,9 @@ class TestTemplate
       c = File.read tf
       c.scan /^void (test_.*)\(\)/
     end.flatten.shuffle
+
+    focus = @test_methods.reject { |m| !m.end_with? "_f" }
+    @test_methods = focus unless focus.empty?
   end
 
   def render(template)
