@@ -35,6 +35,7 @@ int start_server(const int port, const int max_conn)
     printf("Server started on %d port, waiting for connections...\n", port);
 
     char buf[MAX_DATA_SIZE];
+    empty(buf, MAX_DATA_SIZE);
 
     while(1) {
         int remote_sock = accept(serv_sock, (struct sockaddr*)&remote_addr, &remote_addr_len);
@@ -50,6 +51,7 @@ int start_server(const int port, const int max_conn)
             command_result_t res;
             quit = handle_message(buf, len, &res);
             send_response(remote_sock, res);
+            free(res.msg);
             empty(buf, len);
         }
         printf("Client exited.\n");
