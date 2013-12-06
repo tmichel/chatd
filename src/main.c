@@ -3,8 +3,7 @@
 #include <time.h>
 
 #include "server.h"
-#include "command.h"
-#include "parser.h"
+#include "mem.h"
 
 /* TODO: make these settable */
 #define PORT 3222
@@ -13,6 +12,8 @@
 int main(int argc, char const *argv[])
 {
     srand(time(NULL));
+
+    mem_init();
 
     int res = start_server(PORT, MAX_CONN);
 
