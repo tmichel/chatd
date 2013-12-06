@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "server.h"
 #include "command.h"
@@ -10,6 +12,8 @@
 
 int main(int argc, char const *argv[])
 {
+    srand(time(NULL));
+
     int res = start_server(PORT, MAX_CONN);
 
     if (res != 0) {
