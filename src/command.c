@@ -5,6 +5,7 @@
 #include "parser.h"
 #include "command.h"
 #include "mem.h"
+#include "room.h"
 
 static void make_result(command_result_t *res, command_code_t code, char *msg);
 static void command_ok(command_result_t *res, char *msg);
@@ -72,6 +73,7 @@ user_reg(const command_t *cmd) {
             // user = ...
 
             // atm we dont have a persistent store, so create a new user
+            printf("Registering with password.");
             user = new_user_with_name(username);
         } else {
             user = new_user_with_name(username);
@@ -82,6 +84,57 @@ user_reg(const command_t *cmd) {
     char msg[100];
     sprintf(msg, "Welcome %s. Token: %s", user->username, user->token);
 
+    command_ok(&res, msg);
+    return res;
+}
+
+command_result_t
+user_join(const user_t *user, const command_t *cmd) {
+    char *saveptr = NULL;
+    char *token;
+    char *room_name;
+    command_result_t res;
+
+    token = strtok_r(cmd->args, COMMAND_DELIM, &saveptr);
+    if (token == NULL) {
+        // error: no token.
+        command_parse_error(&res);
+        return res;
+    }
+
+    if (strcmp(token, user->token) != 0) {
+        // error: wrong token.
+        make_result(&res, CMD_RES_INV_TOK, "Invalid token.");
+        return res;
+    }
+
+    room_name = strtok_r(NULL, COMMAND_DELIM, &saveptr);
+
+    if (room_name == NULL) {
+        // error: no rome name
+        command_parse_error(&res);
+        return res;
+    }
+
+    room_t *room = NULL;
+    mem_res l_res = mem_lookup_room(room_name, &room);
+    switch (l_res) {
+    case MEM_OK:
+        room_add_user(room, user, 0);
+        break;
+    case MEM_NOTFOUND:
+        room = room_new(room_name);
+        room_add_user(room, user, 1);
+        // TODO: error handling?
+        mem_store_room(room);
+        break;
+    default:
+        command_err(&res, "Unspecified error. Could not join the room.");
+        return res;
+    }
+
+    char msg[100];
+    sprintf(msg, "Joined %s room.", room_name);
     command_ok(&res, msg);
     return res;
 }

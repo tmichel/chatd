@@ -40,3 +40,10 @@ Jelszó csere. Amennyiben a felhasználó csak ideiglenes és nincs még jelszav
 szerveren, akkor regisztrálja a szerver a felhasználót állandó felhasználóként
 regisztrálja megadott jelszóval.  Ilyenkor az _old_ paraméter megadása nem
 szükges.
+
+### Csatlakozás szobához
+
+    JOIN token room
+
+Amennyiben a szoba még nem létezik, akkor újat hozunk létre. Ha már létezik,
+akkor csak belépünk.

@@ -34,6 +34,13 @@
 #define CMD_PWD 3
 #define CMD_PWD_STR "PWD"
 
+/*
+ * User joins room.
+ *
+ * JOIN token room
+ */
+#define CMD_JOIN 4;
+#define CMD_JOIN_STR "JOIN"
 
 /*
  * Command results;
@@ -41,6 +48,7 @@
  */
 #define CMD_RES_OK  100
 #define CMD_RES_ERR 101
+#define CMD_RES_INV_TOK 102
 
 typedef int command_code_t;
 
@@ -80,5 +88,10 @@ command_result_t user_change_pwd(user_t* const user, const command_t *cmd);
  * User exit.
  */
 command_result_t user_exit(user_t* const user, const command_t *cmd);
+
+/*
+ * Join room.
+ */
+command_result_t user_join(const user_t* user, const command_t *cmd);
 
 #endif
