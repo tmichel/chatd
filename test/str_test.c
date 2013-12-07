@@ -131,8 +131,25 @@ void tokenizer_returns_rest_of_string_when_no_more_sep(test_t *t) {
     str_destroy(t1);
 }
 
-int main()
-{
+void test_trim_whitespace(test_t *t) {
+    char *input[3] = {
+        "\t      \nabc",
+        "abc\t     \n",
+        "   \t    \nabc\t     \n",
+    };
+
+    for (int i = 0; i < 3; ++i) {
+        string str = str_new(input[i]);
+        string dest = str_trim(str);
+
+        assert_eq_str(t,"abc", dest.val);
+
+        str_destroy(str);
+        str_destroy(dest);
+    }
+}
+
+int main() {
     test_t *tests[TEST_COUNT] = {
         test(string_create),
         test(string_empty),
@@ -145,6 +162,7 @@ int main()
         test(tokenizer_find_first_without_sep),
         test(tokienizer_find_first_with_sep),
         test(tokenizer_returns_rest_of_string_when_no_more_sep),
+        test(test_trim_whitespace),
     };
 
     for (int i = 0; i < TEST_COUNT && tests[i] != NULL; ++i)

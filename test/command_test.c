@@ -8,18 +8,15 @@
 #include <string.h>
 
 void test_execute_command_with_parse_error(test_t *t) {
-    command_t *c = new_command();
-    c->code = CMD_PARSE_ERROR;
-
-    command_result_t res = command_execute(NULL, c);
+    command_t c = command_new(CMD_PARSE_ERROR, NIL);
+    command_result_t res = command_execute(c, NULL);
 
     assert_eq_int(t, CMD_RES_ERR, res.code);
 }
 
 void test_execute_command_without_user(test_t *t) {
-    command_t *c = new_command();
-    c->code = CMD_TALK;
-    command_result_t res = command_execute(NULL, c);
+    command_t c = command_new(CMD_TALK, NIL);
+    command_result_t res = command_execute(c, NULL);
 
     assert_eq_int(t, CMD_RES_NO_USR, res.code);
 }

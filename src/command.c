@@ -24,7 +24,7 @@ command_new(command_code_t code, string args) {
 }
 
 void
-command_free(command_t cmd) {
+command_destroy(command_t cmd) {
     str_destroy(cmd.args);
 }
 

@@ -79,7 +79,7 @@ typedef struct __command_result command_result_t;
 command_t command_new(command_code_t, string);
 
 // Frees the command struct and its content
-void command_free(command_t cmd);
+void command_destroy(command_t cmd);
 
 /**
  * Execute command.

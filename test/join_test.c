@@ -9,22 +9,15 @@
 
 #define TEST_COUNT 100
 
-void set_cmd_args(command_t *c, char *arg) {
-    c->args = calloc(sizeof(char), sizeof(char) * (strlen(arg) + 1));
-    strcpy(c->args, arg);
-}
-
 void test_join_existing_room(test_t *t) {
     mem_init();
     user_t *u = new_user();
     room_t *r = room_new("test");
     mem_store_room(r);
 
-    command_t *c = new_command();
-    c->code = CMD_JOIN;
-    set_cmd_args(c, "test");
+    command_t c = command_new(CMD_JOIN, str_new("test"));
 
-    command_result_t res = command_execute(u, c);
+    command_result_t res = command_execute(c, u);
 
     assert_eq_int(t, CMD_RES_OK, res.code);
     assert_eq_int(t, 0, r->admins->len);
@@ -34,11 +27,9 @@ void test_join_new_room(test_t *t) {
     mem_init();
     user_t *u = new_user();
 
-    command_t *c = new_command();
-    c->code = CMD_JOIN;
-    set_cmd_args(c, "test");
+    command_t c = command_new(CMD_JOIN, str_new("test"));
 
-    command_result_t res = command_execute(u, c);
+    command_result_t res = command_execute(c, u);
 
     assert_eq_int(t, CMD_RES_OK, res.code);
 

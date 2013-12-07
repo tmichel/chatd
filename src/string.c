@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "string.h"
 
@@ -76,7 +77,18 @@ str_eq(string s1, string s2) {
 
 string
 str_trim(string str) {
-    return NIL;
+    int lindex = 0;
+    int rindex = str.len - 1;
+
+    while(isspace(str.val[lindex])) {
+        ++lindex;
+    }
+    while (rindex > lindex && isspace(str.val[rindex])) {
+        --rindex;
+    }
+
+
+    return str_sub(str, lindex, rindex - lindex + 1);
 }
 
 

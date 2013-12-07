@@ -111,7 +111,7 @@ handle_message(string in, command_result_t *res) {
         quit = 1;
     }
 
-    command_free(cmd);
+    command_destroy(cmd);
 
     return quit;
 }
