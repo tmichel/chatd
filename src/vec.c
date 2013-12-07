@@ -4,9 +4,13 @@
 #include <stdlib.h>
 
 vec_t *vec_new() {
+    return vec_new_cap(10);
+}
+
+vec_t *vec_new_cap(int cap) {
     vec_t *vec = (vec_t*)malloc(sizeof(vec_t*));
     vec->len = 0;
-    vec->cap = 10;
+    vec->cap = cap;
     vec->data = (any_t*)calloc(sizeof(any_t), sizeof(any_t) * vec->cap);
 
     return vec;
@@ -69,6 +73,10 @@ any_t vec_set(vec_t *vec, int idx, any_t val) {
 
 int vec_size(vec_t *vec) {
     return vec->len;
+}
+
+int vec_is_empty(vec_t *vec) {
+    return vec->len == 0;
 }
 
 int vec_contains(vec_t* vec, any_t val) {

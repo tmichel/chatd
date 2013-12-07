@@ -12,6 +12,8 @@ typedef struct
 
 vec_t *vec_new();
 
+vec_t *vec_new_cap(int);
+
 void vec_free(vec_t *vec);
 
 void vec_add(vec_t *vec, any_t value);
@@ -23,6 +25,8 @@ int vec_get(vec_t *vec, int idx, any_t *res);
 any_t vec_set(vec_t *vec, int idx, any_t val);
 
 int vec_size(vec_t *vec);
+
+int vec_is_empty(vec_t*);
 
 int vec_contains(vec_t*, any_t);
 
