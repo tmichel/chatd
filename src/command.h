@@ -61,15 +61,16 @@
 #define CMD_RES_NO_USR  103
 #define CMD_RES_USR_BND 104 // banned
 
-typedef int command_code_t;
+/* Command code, an alias for int */
+typedef int cc_t;
 
 struct __command_result {
-    command_code_t code;
+    cc_t code;
     char *msg;
 };
 
 struct __command {
-    const command_code_t code;
+    const cc_t code;
     string args;
 };
 
@@ -77,12 +78,12 @@ typedef struct __command command_t;
 typedef struct __command_result cr_t;
 
 /* New command with code and args */
-command_t command_new(command_code_t, string);
+command_t command_new(cc_t, string);
 
 // Frees the command struct and its content
 void command_destroy(command_t cmd);
 
-cr_t cr_create(command_code_t code, char *msg);
+cr_t cr_create(cc_t code, char *msg);
 
 cr_t cr_ok();
 

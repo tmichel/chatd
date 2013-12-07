@@ -7,7 +7,7 @@
 #include "mem.h"
 #include "room.h"
 
-static void make_result(cr_t *res, command_code_t code, char *msg);
+static void make_result(cr_t *res, cc_t code, char *msg);
 static void command_ok(cr_t *res, char *msg);
 static void command_err(cr_t *res, char *msg);
 static void command_parse_error(cr_t *res);
@@ -18,7 +18,7 @@ static cr_t user_change_pwd(user_t* const user, const command_t *cmd);
 static cr_t user_exit(user_t* const user, const command_t *cmd);
 
 command_t
-command_new(command_code_t code, string args) {
+command_new(cc_t code, string args) {
     command_t cmd = {code, args};
     return cmd;
 }
@@ -29,7 +29,7 @@ command_destroy(command_t cmd) {
 }
 
 cr_t
-cr_create(command_code_t code, char *msg) {
+cr_create(cc_t code, char *msg) {
     cr_t res;
     res.code = code;
 
@@ -188,7 +188,7 @@ user_talk(command_t cmd, user_t * const user) {
 }
 
 static void
-make_result(cr_t *res, command_code_t code, char *msg) {
+make_result(cr_t *res, cc_t code, char *msg) {
     res->code = code;
 
     int len = strlen(msg);

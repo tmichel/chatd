@@ -4,7 +4,7 @@
 #include "parser.h"
 #include "util.h"
 
-static command_code_t
+static cc_t
 parse_command(string cmd_in) {
     string s = str_trim(cmd_in);
     int result = CMD_PARSE_ERROR;
@@ -29,7 +29,7 @@ command_t
 parse(string in) {
     tok_t tok = str_tok_init(COMMAND_DELIM, in);
     string command_str = str_tok(&tok, SEP_EXCL);
-    command_code_t code = parse_command(command_str);
+    cc_t code = parse_command(command_str);
 
     if (code == CMD_PARSE_ERROR) {
         str_destroy(command_str);
