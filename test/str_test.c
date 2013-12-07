@@ -63,6 +63,20 @@ void sub_on_error_returns_nil(test_t *t) {
     assert(t, "Overreading did not reutrn nil", str_eq(sub3, NIL));
 }
 
+void substring_return_rest(test_t *t) {
+    string str = new_str("test");
+
+    string s1 = str_sub(str, 0, -1);
+    string s2 = str_sub(str, 1, -1);
+
+    assert_str_eq(t, "test", s1.val);
+    assert_str_eq(t, "est", s2.val);
+
+    str_destroy(str);
+    str_destroy(t1);
+    str_destroy(t2);
+}
+
 void string_equality(test_t *t) {
     string s1 = str_new("test");
     string s2 = str_new("test");
