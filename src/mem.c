@@ -1,76 +1,81 @@
 #include <stdlib.h>
 #include <string.h>
 #include "mem.h"
+#include "vec.h"
 
-#define MAX_USER_COUNT 1000
-#define MAX_ROOM_COUNT 1000
+vec_t *users = NULL;
+vec_t *rooms = NULL;
 
-int last_usr;
-int last_room;
-// TODO: use vectors here
-user_t *users[MAX_USER_COUNT] = {NULL};
-room_t *rooms[MAX_ROOM_COUNT] = {NULL};
+static int user_eq(any_t, any_t);
+static int room_eq(any_t, any_t);
 
-mem_res
+void
 mem_init() {
-    memset(users, 0, sizeof(user_t*) * MAX_USER_COUNT);
-    memset(rooms, 0, sizeof(room_t*) * MAX_ROOM_COUNT);
-    last_usr = 0;
-    last_room = 0;
-    return MEM_OK;
+    users = vec_new_cap(100);
+    rooms = vec_new_cap(100);
 }
 
 mem_res
 mem_store_user(user_t *user) {
-    if (last_usr >= MAX_USER_COUNT) {
-        return MEM_FULL;
-    }
-
-    users[last_usr] = user;
-    ++last_usr;
-
+    vec_add(users, user);
     return MEM_OK;
+}
+
+mem_res
+mem_remove_user(user_t* const user) {
+    int res = vec_remove(users, user);
+    return (res ? MEM_OK : MEM_NOTFOUND);
 }
 
 mem_res
 mem_lookup_user(const char *username, user_t **user) {
-    user_t *user_l;
-    for (int i = 0; i < last_usr; ++i) {
-        user_l = users[i];
+    user_t *u = vec_find(users, (any_t)username, user_eq);
 
-        if (strcmp(user_l->username, username) == 0) {
-            *user = user_l;
-            return MEM_OK;
-        }
+    if (u == NULL) {
+        return MEM_NOTFOUND;
     }
 
-    return MEM_NOTFOUND;
-}
-
-mem_res
-mem_store_room(room_t *room) {
-    if (last_room >= MAX_ROOM_COUNT) {
-        return MEM_FULL;
-    }
-
-    rooms[last_room] = room;
-    ++last_room;
-
+    *user = u;
     return MEM_OK;
 }
 
 mem_res
+mem_store_room(room_t *room) {
+    vec_add(rooms, room);
+    return MEM_OK;
+}
+
+mem_res
+mem_remove_room(room_t* const room) {
+    int res = vec_remove(rooms, room);
+    return (res ? MEM_OK : MEM_NOTFOUND);
+}
+
+
+mem_res
 mem_lookup_room(const char *room_name, room_t **room) {
+    room_t *r = vec_find(rooms, (any_t)room_name, room_eq);
 
-    room_t *r;
-
-    for (int i = 0; i < last_room; ++i) {
-        r = rooms[i];
-        if (strcmp(room_name, r->name) == 0) {
-            *room = r;
-            return MEM_OK;
-        }
+    if (r == NULL) {
+        return MEM_NOTFOUND;
     }
 
-    return MEM_NOTFOUND;
+    *room = r;
+    return MEM_OK;
+}
+
+static int
+user_eq(any_t name, any_t user) {
+    char *username = (char*)name;
+    user_t *u = (user_t*)user;
+
+    return strcmp(username, u->username) == 0;
+}
+
+static int
+room_eq(any_t name, any_t room) {
+    char *rname = (char*)name;
+    room_t *r = (room_t*)room;
+
+    return strcmp(rname, r->name) == 0;
 }

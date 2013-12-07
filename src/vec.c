@@ -89,3 +89,13 @@ int vec_contains(vec_t* vec, any_t val) {
     return 0;
 }
 
+any_t vec_find(vec_t *vec, any_t val, int (*predicate)(any_t, any_t)) {
+    for (int i = 0; i < vec->len; ++i) {
+        if (predicate(val, vec->data[i])) {
+            return vec->data[i];
+        }
+    }
+
+    return NULL;
+}
+

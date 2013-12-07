@@ -60,6 +60,7 @@
 #define CMD_RES_INV_TOK 102
 #define CMD_RES_NO_USR  103
 #define CMD_RES_USR_BND 104 // banned
+#define CMD_RES_NO_ROOM 105
 
 /* Command code, an alias for int */
 typedef int cc_t;

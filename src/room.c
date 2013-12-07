@@ -7,8 +7,10 @@
 
 #define MAX_MESSAGE_SIZE 2048
 #define MESSAGE_FORMAT "[%s] <%s> %s\n"
+#define MESSAGE_ADMIN_FORMAT "[%s] <@%s> %s\n"
 
 static void broadcast(room_t * const, char *);
+static int is_admin(room_t * const, user_t * const);
 
 room_t*
 room_new(const char *name) {
@@ -69,8 +71,9 @@ room_send_msg(room_t * const room, user_t * const user, string msg) {
             "ERROR: cannot send a message into a room that you are not in.");
     }
 
+    char *fmt = is_admin(room, user) ? MESSAGE_ADMIN_FORMAT : MESSAGE_FORMAT;
     char *message = (char*)calloc(sizeof(char), sizeof(char) * MAX_MESSAGE_SIZE );
-    snprintf(message, MAX_MESSAGE_SIZE, MESSAGE_FORMAT, room->name, user->username, msg.val);
+    snprintf(message, MAX_MESSAGE_SIZE, fmt, room->name, user->username, msg.val);
 
     broadcast(room, message);
 
@@ -88,4 +91,9 @@ broadcast(room_t * const room, char* message) {
             write(u->sock, message, strlen(message));
         }
     }
+}
+
+static int
+is_admin(room_t* const room, user_t* const user) {
+    return vec_contains(room->admins, user);
 }

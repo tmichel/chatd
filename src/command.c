@@ -168,7 +168,7 @@ user_join(command_t cmd, user_t * const user) {
     }
 
     char msg[100];
-    sprintf(msg, "Joined %s room.", room_name.val);
+    sprintf(msg, "Joined room '%s', which currently has %d user(s).", room_name.val, vec_size(room->users));
     command_ok(&res, msg);
     str_destroy(room_name);
     return res;
@@ -189,7 +189,7 @@ user_talk(command_t cmd, user_t * const user) {
         res = room_send_msg(room, user, message);
         str_destroy(message);
     } else {
-        command_err(&res, "No such room.");
+        make_result(&res, CMD_RES_NO_ROOM, "No such room");
     }
 
     str_destroy(room_name);
@@ -203,7 +203,12 @@ user_exit(command_t cmd, user_t * const user) {
     for (int i = 0; i < vec_size(user->rooms); ++i) {
         vec_get(user->rooms, i, (any_t*)&r);
         room_remove_user(r, user);
+
+        if (vec_is_empty(r->users)) {
+            mem_remove_room(r);
+        }
     }
+    mem_remove_user(user);
 
     return cr_ok();
 }

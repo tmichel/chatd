@@ -30,4 +30,16 @@ int vec_is_empty(vec_t*);
 
 int vec_contains(vec_t*, any_t);
 
+/**
+ * Find an item in the vector.
+ *
+ * The third parameter is a test function which should return true (1) when
+ * the item is found. The second parameter will be passed to the test function
+ * as the first parameter.
+ *
+ * If there was no item that returned true for the test function NULL will be
+ * returned.
+ */
+any_t vec_find(vec_t*, any_t, int (*)(any_t, any_t));
+
 #endif
