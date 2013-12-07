@@ -21,6 +21,7 @@ void test_join_existing_room(test_t *t) {
     mem_store_room(r);
 
     command_t *c = new_command();
+    c->code = CMD_JOIN;
     set_cmd_args(c, "test");
 
     command_result_t res = command_execute(u, c);
@@ -34,6 +35,7 @@ void test_join_new_room(test_t *t) {
     user_t *u = new_user();
 
     command_t *c = new_command();
+    c->code = CMD_JOIN;
     set_cmd_args(c, "test");
 
     command_result_t res = command_execute(u, c);
