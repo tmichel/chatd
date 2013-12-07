@@ -1,6 +1,6 @@
 # chatd protokoll
 
-A kliens és szerver egy saját szöveges protokollon keresztül kommunkál. A
+A kliens és szerver egy saját szöveges protokollon keresztül kommunikál. A
 parancsok általános formátuma a következő:
 
     COMMAND [arguments]
@@ -9,7 +9,7 @@ A válasz formátuma a következő:
 
     CODE message
 
-Sikeres végrehajtás esetén a visszatérésis kód:
+Sikeres végrehajtás esetén a visszatérési kód:
 
     100 message
 
@@ -21,9 +21,9 @@ A pontos hibakódok megtalálhatóak a `command.h` header fájlban.
 
     REG username [password]
 
-Regisztráció és authentikáció egyben. Nem létező felhasználó esetén létrehoz
-egyet, ha a jelszó is van, akkor perzisztens felhasználót hoz létre, aki később
-is beléphet. Ha nincs jelszo, akkor ideiglenes felhasználó jön létre, ami a
+Regisztráció és autentikáció egyben. Nem létező felhasználó esetén létrehoz
+egyet, ha a jelszó is van, akkor állandó felhasználót hoz létre, aki később
+is beléphet. Ha nincs jelszó, akkor ideiglenes felhasználó jön létre, ami a
 sessionje végén megszűnik.
 
 ### Kilépés
@@ -39,11 +39,22 @@ Kilép a felhasználó. Minden csatornáról kiléptetjük.
 Jelszó csere. Amennyiben a felhasználó csak ideiglenes és nincs még jelszava a
 szerveren, akkor regisztrálja a szerver a felhasználót állandó felhasználóként
 regisztrálja megadott jelszóval.  Ilyenkor az _old_ paraméter megadása nem
-szükges.
+szükséges.
 
 ### Csatlakozás szobához
 
-    JOIN token room
+    JOIN room
 
 Amennyiben a szoba még nem létezik, akkor újat hozunk létre. Ha már létezik,
 akkor csak belépünk.
+
+### Üzenet küldése a szobába
+
+    TALK room message
+
+Üzenet küldése egy szobába. Üzenet küldés nem sikerül, ha a következők egyike
+teljesül:
+
+* a felhasználó nincs a szobában
+* nincs ilyen szoba
+* nincs a felhasználónak joga beszélni a szobában.
