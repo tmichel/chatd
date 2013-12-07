@@ -23,6 +23,7 @@ mem_store_user(user_t *user) {
 
 mem_res
 mem_remove_user(user_t* const user) {
+    // TODO: sys log
     int res = vec_remove(users, user);
     return (res ? MEM_OK : MEM_NOTFOUND);
 }
@@ -47,6 +48,7 @@ mem_store_room(room_t *room) {
 
 mem_res
 mem_remove_room(room_t* const room) {
+    // TODO: sys log
     int res = vec_remove(rooms, room);
     return (res ? MEM_OK : MEM_NOTFOUND);
 }

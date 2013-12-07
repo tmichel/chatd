@@ -123,7 +123,7 @@ handle_conn(int client_sock) {
     char buf[MAX_DATA_SIZE] = {0};
     int len = 0;
     int quit = 0;
-    user_t *user;
+    user_t *user = NULL;
 
     while(!quit && (len = read(client_sock, buf, sizeof(buf))) > 0) {
         cr_t res = cr_init();
