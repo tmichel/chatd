@@ -97,7 +97,7 @@ void tokenizer_find_first_without_sep(test_t *t) {
     string str = str_new("hello world");
     tok_t tok = str_tok_init(' ', str);
 
-    string t1 = str_tok(&tok, 0);
+    string t1 = str_tok(&tok, SEP_EXCL);
     assert_eq_str(t, "hello", t1.val);
 
     str_destroy(str);
@@ -108,7 +108,7 @@ void tokienizer_find_first_with_sep(test_t *t) {
     string str = str_new("hello world");
     tok_t tok = str_tok_init(' ', str);
 
-    string t1 = str_tok(&tok, 1);
+    string t1 = str_tok(&tok, SEP_INCL);
 
     assert_eq_str(t, "hello ", t1.val);
     assert(t, "Does not have more tokens.", tok.has_more);
@@ -131,7 +131,7 @@ void tokenizer_returns_rest_of_string_when_no_more_sep(test_t *t) {
     str_destroy(t1);
 }
 
-void test_trim_whitespace(test_t *t) {
+void trim_whitespace(test_t *t) {
     char *input[3] = {
         "\t      \nabc",
         "abc\t     \n",
@@ -149,6 +149,20 @@ void test_trim_whitespace(test_t *t) {
     }
 }
 
+void tokenizer_returns_nil_when_no_more_tokens_found(test_t *t) {
+    string str = str_new("test");
+    tok_t tok = str_tok_init(' ', str);
+
+    str_destroy(str_tok(&tok, SEP_EXCL));
+
+    string t1 = str_tok(&tok, SEP_EXCL);
+
+    assert(t, "Token is not nil", str_is_nil(t1));
+
+    str_destroy(t1);
+    str_destroy(str);
+}
+
 int main() {
     test_t *tests[TEST_COUNT] = {
         test(string_create),
@@ -162,7 +176,8 @@ int main() {
         test(tokenizer_find_first_without_sep),
         test(tokienizer_find_first_with_sep),
         test(tokenizer_returns_rest_of_string_when_no_more_sep),
-        test(test_trim_whitespace),
+        test(trim_whitespace),
+        test(tokenizer_returns_nil_when_no_more_tokens_found),
     };
 
     for (int i = 0; i < TEST_COUNT && tests[i] != NULL; ++i)

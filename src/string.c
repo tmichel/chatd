@@ -94,7 +94,7 @@ str_trim(string str) {
 
 tok_t
 str_tok_init(char sep, string str) {
-    tok_t token = {sep, str, 0, 0};
+    tok_t token = {sep, str, 0, 1};
     return token;
 }
 
@@ -104,7 +104,7 @@ str_tok(tok_t *tok, int include_sep) {
     string str = tok->str;
 
     // start > len
-    if (i > str.len) {
+    if (i > str.len || !tok->has_more) {
         return NIL;
     }
 

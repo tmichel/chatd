@@ -83,7 +83,7 @@ user_reg(command_t cmd) {
 
     if (lookup_res == MEM_NOTFOUND) {
         // password was specified. login or register
-        if (!str_is_nil(password)) {
+        if (!str_is_nil(password) && !str_is_empty(password)) {
             // TODO: lookup from persistent store and authenticate
             // user = ...
 
