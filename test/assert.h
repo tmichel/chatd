@@ -2,6 +2,7 @@
 #define _ASSERT_H
 
 #define assert(t, msg, expr) _assert(t, msg, expr, __FILE__, __LINE__)
+#define assert_not(t, msg, expr) _assert_not(t, msg, expr, __FILE__, __LINE__)
 #define assert_eq_str(t, exp, act) _assert_eq_str(t, exp, act, __FILE__, __LINE__)
 #define assert_eq_int(t, exp, act) _assert_eq_int(t, exp, act, __FILE__, __LINE__)
 #define assert_neq_int(t, exp, act) _assert_neq_int(t, exp, act, __FILE__, __LINE__)
@@ -26,7 +27,9 @@ void eval(test_t*);
 
 void _assert(test_t *t, char *msg, int expr, char *file, int line);
 
-void _assert_eq_str(test_t *t, char* exp, char* act, char *file, int line);
+void _assert_not(test_t *t, char *msg, int expr, char *file, int line);
+
+void _assert_eq_str(test_t *t, const char* exp, const char* act, char *file, int line);
 
 void _assert_eq_int(test_t *t, int exp, int act, char *file, int line);
 

@@ -34,7 +34,7 @@ void print_stats(test_t **tests, int count) {
 
         if (test->failed) {
             ++failed_count;
-            printf("Test failed in %s:%d\n%s\n", test->file, test->line, test->msg);
+            printf("Test failed in %s:%d\n%s\n\n", test->file, test->line, test->msg);
         }
     }
 
@@ -51,7 +51,11 @@ void _assert(test_t *t, char *msg, int expr, char *file, int line) {
     }
 }
 
-void _assert_eq_str(test_t *t, char* exp, char* act, char *file, int line) {
+void _assert_not(test_t *t, char *msg, int expr, char *file, int line) {
+    _assert(t, msg, !expr, file, line);
+}
+
+void _assert_eq_str(test_t *t, const char *exp, const char *act, char *file, int line) {
     // TODO: this is not such a good idea. figure out the exact length
     char msg[1000];
     sprintf(msg,
