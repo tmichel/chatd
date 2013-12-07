@@ -18,7 +18,7 @@
  * Returns 1 if connection needs to be closed.
  */
 static void handle_conn(int client_sock);
-static int handle_message(string in, cr_t *res);
+static int handle_message(string in, user_t * user, /* out */ cr_t *res);
 static int open_serv_sock(const int port, const int max_conn);
 static void send_response(int sock, cr_t res);
 static void send_welcome(int sock);
@@ -96,15 +96,16 @@ open_serv_sock(const int port, const int max_conn) {
 }
 
 static int
-handle_message(string in, cr_t *res) {
+handle_message(string in, user_t *user, cr_t *res) {
     int quit = 0;
 
     command_t cmd = parse(in);;
 
     // execute command
-    cr_t result = command_execute(cmd, NULL);
+    cr_t result = command_execute(cmd, user);
     res->code = result.code;
     res->msg = result.msg;
+    res->user = result.user;
 
     if (cmd.code == CMD_EXIT) {
         quit = 1;
@@ -122,11 +123,18 @@ handle_conn(int client_sock) {
     char buf[MAX_DATA_SIZE] = {0};
     int len = 0;
     int quit = 0;
+    user_t *user;
 
     while(!quit && (len = read(client_sock, buf, sizeof(buf))) > 0) {
-        cr_t res;
+        cr_t res = cr_init();
         string in = str_newn(buf, len);
-        quit = handle_message(in, &res);
+        quit = handle_message(in, user, &res);
+
+        if (res.user != NULL) {
+            user = res.user;
+            user->sock = client_sock;
+        }
+
         send_response(client_sock, res);
         free(res.msg);
         memset(buf, 0, len);

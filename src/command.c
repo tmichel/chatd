@@ -29,9 +29,14 @@ command_destroy(command_t cmd) {
 }
 
 cr_t
+cr_init() {
+    cr_t res = {CMD_RES_ERR, NULL, NULL};
+    return res;
+}
+
+cr_t
 cr_create(cc_t code, char *msg) {
-    cr_t res;
-    res.code = code;
+    cr_t res = cr_init();
 
     res.msg = (char*)calloc(sizeof(char), sizeof(char) * (strlen(msg) + 1));
     strcpy(res.msg, msg);
@@ -44,10 +49,9 @@ cr_ok() {
     return cr_create(CMD_RES_OK, "OK");
 }
 
-
 cr_t
 command_execute(command_t cmd, user_t * const user) {
-    cr_t res = {-1, NULL};
+    cr_t res = cr_init();
 
     if (cmd.code == CMD_PARSE_ERROR) {
         command_parse_error(&res);
@@ -119,6 +123,7 @@ user_reg(command_t cmd) {
     sprintf(msg, "Welcome %s. Join a room with 'JOIN room'", user->username);
 
     command_ok(&res, msg);
+    res.user = user;
     str_destroy(username);
     str_destroy(password);
     return res;

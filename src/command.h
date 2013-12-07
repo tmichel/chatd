@@ -67,6 +67,7 @@ typedef int cc_t;
 struct __command_result {
     cc_t code;
     char *msg;
+    user_t *user;
 };
 
 struct __command {
@@ -86,6 +87,8 @@ void command_destroy(command_t cmd);
 cr_t cr_create(cc_t code, char *msg);
 
 cr_t cr_ok();
+
+cr_t cr_init();
 
 /**
  * Execute command.
