@@ -217,6 +217,8 @@ user_leave(struct room_req req) {
     if (vec_is_empty(req.room->users)) {
         mem_remove_room(req.room);
     }
+
+    *req.res = cr_ok();
 }
 
 static cr_t
