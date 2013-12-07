@@ -37,10 +37,18 @@
 /*
  * User joins room.
  *
- * JOIN token room
+ * JOIN room
  */
 #define CMD_JOIN 4
 #define CMD_JOIN_STR "JOIN"
+
+/*
+ * User talks in a room.
+ *
+ * TALK room message
+ */
+#define CMD_TALK 5
+#define CMD_TALK_STR "TALK"
 
 /*
  * Command results;
@@ -74,25 +82,5 @@ void free_command(command_t* cmd);
  * Execute command.
  */
 command_result_t command_execute(user_t * const user, command_t *cmd);
-
-/*
- * User registration.
- */
-command_result_t user_reg(const command_t *cmd);
-
-/*
- * Change user's password.
- */
-command_result_t user_change_pwd(user_t* const user, const command_t *cmd);
-
-/*
- * User exit.
- */
-command_result_t user_exit(user_t* const user, const command_t *cmd);
-
-/*
- * Join room.
- */
-command_result_t user_join(user_t* const user, const command_t *cmd);
 
 #endif

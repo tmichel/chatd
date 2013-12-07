@@ -9,28 +9,9 @@
 
 #define TEST_COUNT 100
 
-void set_cmd_args(command_t *c, char *msg) {
-    c->args = calloc(sizeof(char), sizeof(char) * (strlen(msg) + 1));
-    strcpy(c->args, msg);
-}
-
-void test_join_without_valid_token(test_t *t) {
-    user_t *u = new_user();
-    command_t *c = new_command();
-    set_cmd_args(c, "12345");
-    command_result_t res = user_join(u, c);
-
-    assert_eq_int(t, CMD_RES_INV_TOK, res.code);
-}
-
-void test_join_without_token(test_t *t) {
-    user_t *u = new_user();
-    command_t *c = new_command();
-    set_cmd_args(c, "");
-
-    command_result_t res = user_join(u, c);
-
-    assert_eq_int(t, CMD_RES_ERR, res.code);
+void set_cmd_args(command_t *c, char *arg) {
+    c->args = calloc(sizeof(char), sizeof(char) * (strlen(arg) + 1));
+    strcpy(c->args, arg);
 }
 
 void test_join_existing_room(test_t *t) {
@@ -40,11 +21,9 @@ void test_join_existing_room(test_t *t) {
     mem_store_room(r);
 
     command_t *c = new_command();
-    char arg[20] = {0};
-    sprintf(arg, "%s test", u->token);
-    c->args = arg;
+    set_cmd_args(c, "test");
 
-    command_result_t res = user_join(u, c);
+    command_result_t res = command_execute(u, c);
 
     assert_eq_int(t, CMD_RES_OK, res.code);
     assert_eq_int(t, 0, r->admins->len);
@@ -55,11 +34,9 @@ void test_join_new_room(test_t *t) {
     user_t *u = new_user();
 
     command_t *c = new_command();
-    char arg[20] = {0};
-    sprintf(arg, "%s test", u->token);
-    c->args = arg;
+    set_cmd_args(c, "test");
 
-    command_result_t res = user_join(u, c);
+    command_result_t res = command_execute(u, c);
 
     assert_eq_int(t, CMD_RES_OK, res.code);
 
@@ -71,10 +48,8 @@ void test_join_new_room(test_t *t) {
 int main()
 {
     test_t *tests[TEST_COUNT] = { NULL };
-    tests[0] = test(test_join_without_valid_token);
-    tests[1] = test(test_join_without_token);
-    tests[2] = test(test_join_existing_room);
-    tests[3] = test(test_join_new_room);
+    tests[0] = test(test_join_existing_room);
+    tests[1] = test(test_join_new_room);
 
     for (int i = 0; i < TEST_COUNT && tests[i] != NULL; ++i)
     {

@@ -4,7 +4,6 @@
 #include "vec.h"
 
 typedef struct {
-    char *token;
     char *username;
     int sock;
 } user_t;

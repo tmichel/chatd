@@ -11,7 +11,11 @@ static void make_result(command_result_t *res, command_code_t code, char *msg);
 static void command_ok(command_result_t *res, char *msg);
 static void command_err(command_result_t *res, char *msg);
 static void command_parse_error(command_result_t *res);
-static int parse_token(const command_t *cmd, char **token, char **saveptr, command_result_t *res);
+static command_result_t user_reg(const command_t *cmd);
+static command_result_t user_join(user_t* const user, const command_t *cmd);
+static command_result_t user_talk(user_t* const user, const command_t *cmd);
+static command_result_t user_change_pwd(user_t* const user, const command_t *cmd);
+static command_result_t user_exit(user_t* const user, const command_t *cmd);
 
 command_t*
 new_command() {
@@ -30,7 +34,7 @@ free_command(command_t* cmd) {
 
 command_result_t
 command_execute(user_t * const user, command_t *cmd) {
-    command_result_t res;
+    command_result_t res = {-1, NULL};
 
     if (cmd->code == CMD_PARSE_ERROR) {
         command_parse_error(&res);
@@ -48,14 +52,14 @@ command_execute(user_t * const user, command_t *cmd) {
         return user_reg(cmd);
     case CMD_JOIN:
         return user_join(user, cmd);
-    default:
-        command_parse_error(&res);
     }
 
+    command_parse_error(&res);
     return res;
 }
 
-command_result_t
+/* User registration. */
+static command_result_t
 user_reg(const command_t *cmd) {
     char *saveptr;
     char *username;
@@ -95,30 +99,24 @@ user_reg(const command_t *cmd) {
     }
 
     char msg[100];
-    sprintf(msg, "Welcome %s. Token: %s", user->username, user->token);
+    sprintf(msg, "Welcome %s. Join a room with 'JOIN room'", user->username);
 
     command_ok(&res, msg);
     return res;
 }
 
-command_result_t
+/* Get a room.
+params:
+    user: the user who will join the room
+    cmd: the actual command
+    str: string residue from strtok_r */
+static command_result_t
 user_join(user_t * const user, const command_t *cmd) {
     char *saveptr = NULL;
-    char *token = NULL;
     char *room_name;
     command_result_t res;
 
-    if (!parse_token(cmd, &token, &saveptr, &res)) {
-        return res;
-    }
-
-    if (strcmp(token, user->token) != 0) {
-        // error: wrong token.
-        make_result(&res, CMD_RES_INV_TOK, "Invalid token.");
-        return res;
-    }
-
-    room_name = strtok_r(NULL, COMMAND_DELIM, &saveptr);
+    room_name = strtok_r(cmd->args, COMMAND_DELIM, &saveptr);
 
     if (room_name == NULL) {
         // error: no rome name
@@ -147,21 +145,6 @@ user_join(user_t * const user, const command_t *cmd) {
     sprintf(msg, "Joined %s room.", room_name);
     command_ok(&res, msg);
     return res;
-}
-
-static int
-parse_token(const command_t *cmd, char **token, char **saveptr, command_result_t *res) {
-    char *tok;
-
-    tok = strtok_r(cmd->args, COMMAND_DELIM, saveptr);
-    if (tok == NULL) {
-        // error: no tok.
-        command_parse_error(res);
-        return 0;
-    }
-
-    *token = tok;
-    return 1;
 }
 
 static void
