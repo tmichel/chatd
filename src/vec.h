@@ -24,4 +24,6 @@ any_t vec_set(vec_t *vec, int idx, any_t val);
 
 int vec_size(vec_t *vec);
 
+int vec_contains(vec_t*, any_t);
+
 #endif

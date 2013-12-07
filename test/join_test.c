@@ -17,7 +17,7 @@ void test_join_existing_room(test_t *t) {
 
     command_t c = command_new(CMD_JOIN, str_new("test"));
 
-    command_result_t res = command_execute(c, u);
+    cr_t res = command_execute(c, u);
 
     assert_eq_int(t, CMD_RES_OK, res.code);
     assert_eq_int(t, 0, r->admins->len);
@@ -29,7 +29,7 @@ void test_join_new_room(test_t *t) {
 
     command_t c = command_new(CMD_JOIN, str_new("test"));
 
-    command_result_t res = command_execute(c, u);
+    cr_t res = command_execute(c, u);
 
     assert_eq_int(t, CMD_RES_OK, res.code);
 

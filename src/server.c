@@ -19,9 +19,9 @@
  * Returns 1 if connection needs to be closed.
  */
 static void handle_conn(int client_sock);
-static int handle_message(string in, command_result_t *res);
+static int handle_message(string in, cr_t *res);
 static int open_serv_sock(const int port, const int max_conn);
-static void send_response(int sock, command_result_t res);
+static void send_response(int sock, cr_t res);
 static void send_welcome(int sock);
 
 int start_server(const int port, const int max_conn)
@@ -55,7 +55,7 @@ int start_server(const int port, const int max_conn)
 }
 
 static void
-send_response(int sock, command_result_t res) {
+send_response(int sock, cr_t res) {
     char response[MAX_RESPONSE_SIZE] = {0};
     int len = sprintf(response, "%d %s\n", res.code, res.msg);
 
@@ -97,13 +97,13 @@ open_serv_sock(const int port, const int max_conn) {
 }
 
 static int
-handle_message(string in, command_result_t *res) {
+handle_message(string in, cr_t *res) {
     int quit = 0;
 
     command_t cmd = parse(in);;
 
     // execute command
-    command_result_t result = command_execute(cmd, NULL);
+    cr_t result = command_execute(cmd, NULL);
     res->code = result.code;
     res->msg = result.msg;
 
@@ -125,7 +125,7 @@ handle_conn(int client_sock) {
     int quit = 0;
 
     while(!quit && (len = read(client_sock, buf, sizeof(buf))) > 0) {
-        command_result_t res;
+        cr_t res;
         string in = str_newn(buf, len);
         quit = handle_message(in, &res);
         send_response(client_sock, res);

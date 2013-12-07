@@ -59,6 +59,7 @@
 #define CMD_RES_ERR     101
 #define CMD_RES_INV_TOK 102
 #define CMD_RES_NO_USR  103
+#define CMD_RES_USR_BND 104 // banned
 
 typedef int command_code_t;
 
@@ -73,7 +74,7 @@ struct __command {
 };
 
 typedef struct __command command_t;
-typedef struct __command_result command_result_t;
+typedef struct __command_result cr_t;
 
 /* New command with code and args */
 command_t command_new(command_code_t, string);
@@ -81,9 +82,13 @@ command_t command_new(command_code_t, string);
 // Frees the command struct and its content
 void command_destroy(command_t cmd);
 
+cr_t cr_create(command_code_t code, char *msg);
+
+cr_t cr_ok();
+
 /**
  * Execute command.
  */
-command_result_t command_execute(command_t cmd, user_t * const user);
+cr_t command_execute(command_t cmd, user_t * const user);
 
 #endif

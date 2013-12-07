@@ -11,7 +11,7 @@ void test_user_reg_without_password(test_t *t) {
     mem_init();
     command_t cmd = command_new(CMD_REG, str_new("test"));
 
-    command_result_t res = command_execute(cmd, NULL);
+    cr_t res = command_execute(cmd, NULL);
     assert_eq_int(t,CMD_RES_OK, res.code);
 
     user_t* u = NULL;
@@ -26,7 +26,7 @@ void test_user_reg_with_without_args(test_t *t) {
     mem_init();
     command_t cmd = command_new(CMD_REG, NIL);
 
-    command_result_t res = command_execute(cmd, NULL);
+    cr_t res = command_execute(cmd, NULL);
 
     assert_eq_int(t, CMD_RES_ERR, res.code);
 
@@ -39,8 +39,8 @@ void test_user_reg_twice(test_t *t) {
     command_t cmd1 = command_new(CMD_REG, str_new("test"));
     command_t cmd2 = command_new(CMD_REG, str_new("test"));
 
-    command_result_t res1 = command_execute(cmd1, NULL);
-    command_result_t res2 = command_execute(cmd2, NULL);
+    cr_t res1 = command_execute(cmd1, NULL);
+    cr_t res2 = command_execute(cmd2, NULL);
 
     assert_eq_int(t, CMD_RES_ERR, res2.code);
 

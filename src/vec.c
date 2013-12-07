@@ -56,3 +56,14 @@ any_t vec_set(vec_t *vec, int idx, any_t val) {
 int vec_size(vec_t *vec) {
     return vec->len;
 }
+
+int vec_contains(vec_t* vec, any_t val) {
+    for (int i = 0; i < vec->len; ++i) {
+        if (val == vec->data[i]) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+

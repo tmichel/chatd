@@ -7,15 +7,15 @@
 #include "mem.h"
 #include "room.h"
 
-static void make_result(command_result_t *res, command_code_t code, char *msg);
-static void command_ok(command_result_t *res, char *msg);
-static void command_err(command_result_t *res, char *msg);
-static void command_parse_error(command_result_t *res);
-static command_result_t user_reg(command_t cmd);
-static command_result_t user_join(command_t cmd, user_t* const user);
-static command_result_t user_talk(user_t* const user, const command_t *cmd);
-static command_result_t user_change_pwd(user_t* const user, const command_t *cmd);
-static command_result_t user_exit(user_t* const user, const command_t *cmd);
+static void make_result(cr_t *res, command_code_t code, char *msg);
+static void command_ok(cr_t *res, char *msg);
+static void command_err(cr_t *res, char *msg);
+static void command_parse_error(cr_t *res);
+static cr_t user_reg(command_t cmd);
+static cr_t user_join(command_t cmd, user_t* const user);
+static cr_t user_talk(command_t cmd, user_t* const user);
+static cr_t user_change_pwd(user_t* const user, const command_t *cmd);
+static cr_t user_exit(user_t* const user, const command_t *cmd);
 
 command_t
 command_new(command_code_t code, string args) {
@@ -28,9 +28,26 @@ command_destroy(command_t cmd) {
     str_destroy(cmd.args);
 }
 
-command_result_t
+cr_t
+cr_create(command_code_t code, char *msg) {
+    cr_t res;
+    res.code = code;
+
+    res.msg = (char*)calloc(sizeof(char), sizeof(char) * (strlen(msg) + 1));
+    strcpy(res.msg, msg);
+
+    return res;
+}
+
+cr_t
+cr_ok() {
+    return cr_create(CMD_RES_OK, "OK");
+}
+
+
+cr_t
 command_execute(command_t cmd, user_t * const user) {
-    command_result_t res = {-1, NULL};
+    cr_t res = {-1, NULL};
 
     if (cmd.code == CMD_PARSE_ERROR) {
         command_parse_error(&res);
@@ -55,9 +72,9 @@ command_execute(command_t cmd, user_t * const user) {
 }
 
 /* User registration. */
-static command_result_t
+static cr_t
 user_reg(command_t cmd) {
-    command_result_t res;
+    cr_t res;
     tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
 
     string username = str_tok(&tok, SEP_EXCL);
@@ -109,9 +126,9 @@ user_reg(command_t cmd) {
 params:
     user: the user who will join the room
     cmd: the actual command*/
-static command_result_t
+static cr_t
 user_join(command_t cmd, user_t * const user) {
-    command_result_t res;
+    cr_t res;
     tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
 
     string room_name = str_tok(&tok, SEP_EXCL);
@@ -148,8 +165,30 @@ user_join(command_t cmd, user_t * const user) {
     return res;
 }
 
+static cr_t
+user_talk(command_t cmd, user_t * const user) {
+    cr_t res;
+    tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
+    room_t *room = NULL;
+
+    string room_name = str_tok(&tok, SEP_EXCL);
+
+    if (str_is_nil(room_name)) {
+        command_parse_error(&res);
+    } else if (mem_lookup_room(room_name.val, &room) == MEM_OK){
+        string message = str_tok_rest(tok);
+        res = room_send_msg(room, user, message);
+        str_destroy(message);
+    } else {
+        command_err(&res, "No such room.");
+    }
+
+    str_destroy(room_name);
+    return res;
+}
+
 static void
-make_result(command_result_t *res, command_code_t code, char *msg) {
+make_result(cr_t *res, command_code_t code, char *msg) {
     res->code = code;
 
     int len = strlen(msg);
@@ -158,16 +197,16 @@ make_result(command_result_t *res, command_code_t code, char *msg) {
 }
 
 static void
-command_ok(command_result_t *res, char *msg) {
+command_ok(cr_t *res, char *msg) {
     make_result(res, CMD_RES_OK, msg);
 }
 
 static void
-command_err(command_result_t *res, char *msg) {
+command_err(cr_t *res, char *msg) {
     make_result(res, CMD_RES_ERR, msg);
 }
 
 static void
-command_parse_error(command_result_t *res) {
+command_parse_error(cr_t *res) {
     command_err(res, "ERROR: could not parse command.");
 }
