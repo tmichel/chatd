@@ -9,6 +9,7 @@
 #include "command.h"
 #include "parser.h"
 #include "util.h"
+#include "string.h"
 
 #define MAX_DATA_SIZE 1024
 #define MAX_RESPONSE_SIZE 1024
@@ -18,7 +19,7 @@
  * Returns 1 if connection needs to be closed.
  */
 static void handle_conn(int client_sock);
-static int handle_message(char *buf, size_t len, command_result_t *res);
+static int handle_message(string in, command_result_t *res);
 static int open_serv_sock(const int port, const int max_conn);
 static void send_response(int sock, command_result_t res);
 static void send_welcome(int sock);
@@ -96,22 +97,21 @@ open_serv_sock(const int port, const int max_conn) {
 }
 
 static int
-handle_message(char *buf, size_t len, command_result_t *res) {
+handle_message(string in, command_result_t *res) {
     int quit = 0;
 
-    command_t *cmd = new_command();
-    parse(buf, len, cmd);
+    command_t cmd = parse(in);;
 
     // execute command
-    command_result_t result = command_execute(NULL, cmd);
+    command_result_t result = command_execute(cmd, NULL);
     res->code = result.code;
     res->msg = result.msg;
 
-    if (cmd->code == CMD_EXIT) {
+    if (cmd.code == CMD_EXIT) {
         quit = 1;
     }
 
-    free_command(cmd);
+    command_free(cmd);
 
     return quit;
 }
@@ -126,7 +126,8 @@ handle_conn(int client_sock) {
 
     while(!quit && (len = read(client_sock, buf, sizeof(buf))) > 0) {
         command_result_t res;
-        quit = handle_message(buf, len, &res);
+        string in = str_newn(buf, len);
+        quit = handle_message(in, &res);
         send_response(client_sock, res);
         free(res.msg);
         empty(buf, len);

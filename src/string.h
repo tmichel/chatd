@@ -2,6 +2,8 @@
 #define _E_STRING_H
 
 #define NIL str_nil()
+#define SEP_EXCL 0
+#define SEP_INCL 1
 
 typedef struct
 {
@@ -37,6 +39,8 @@ int str_is_nil(string);
  * end is exclusive
  */
 string str_sub(string, int, int);
+
+string str_trim(string);
 
 int str_eq(string, string);
 

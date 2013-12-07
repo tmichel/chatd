@@ -11,47 +11,43 @@ static void make_result(command_result_t *res, command_code_t code, char *msg);
 static void command_ok(command_result_t *res, char *msg);
 static void command_err(command_result_t *res, char *msg);
 static void command_parse_error(command_result_t *res);
-static command_result_t user_reg(const command_t *cmd);
-static command_result_t user_join(user_t* const user, const command_t *cmd);
+static command_result_t user_reg(command_t cmd);
+static command_result_t user_join(command_t cmd, user_t* const user);
 static command_result_t user_talk(user_t* const user, const command_t *cmd);
 static command_result_t user_change_pwd(user_t* const user, const command_t *cmd);
 static command_result_t user_exit(user_t* const user, const command_t *cmd);
 
-command_t*
-new_command() {
-    command_t *cmd = (command_t*)malloc(sizeof(command_t));
-    cmd->code = CMD_PARSE_ERROR;
-    cmd->args = NULL;
-
+command_t
+command_new(command_code_t code, string args) {
+    command_t cmd = {code, args};
     return cmd;
 }
 
 void
-free_command(command_t* cmd) {
-    free(cmd->args);
-    free(cmd);
+command_free(command_t cmd) {
+    str_destroy(cmd.args);
 }
 
 command_result_t
-command_execute(user_t * const user, command_t *cmd) {
+command_execute(command_t cmd, user_t * const user) {
     command_result_t res = {-1, NULL};
 
-    if (cmd->code == CMD_PARSE_ERROR) {
+    if (cmd.code == CMD_PARSE_ERROR) {
         command_parse_error(&res);
         return res;
     }
 
     // everything needs a user except REG
-    if (cmd->code != CMD_REG && user == NULL) {
+    if (cmd.code != CMD_REG && user == NULL) {
         make_result(&res, CMD_RES_NO_USR, "No user found for connection.");
         return res;
     }
 
-    switch (cmd->code) {
+    switch (cmd.code) {
     case CMD_REG:
         return user_reg(cmd);
     case CMD_JOIN:
-        return user_join(user, cmd);
+        return user_join(cmd, user);
     }
 
     command_parse_error(&res);
@@ -60,40 +56,42 @@ command_execute(user_t * const user, command_t *cmd) {
 
 /* User registration. */
 static command_result_t
-user_reg(const command_t *cmd) {
-    char *saveptr;
-    char *username;
-    char *password;
+user_reg(command_t cmd) {
     command_result_t res;
+    tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
 
-    username = strtok_r(cmd->args, COMMAND_DELIM, &saveptr);
+    string username = str_tok(&tok, SEP_EXCL);
 
     // if we could not find a username
-    if (username == NULL) {
+    if (str_is_nil(username)) {
         command_parse_error(&res);
+        str_destroy(username);
         return res;
     }
-    password = strtok_r(NULL, COMMAND_DELIM, &saveptr);
+
+    string password = str_tok(&tok, SEP_EXCL);
 
     user_t *user = NULL;
-    mem_res lookup_res = mem_lookup_user(username, &user);
+    mem_res lookup_res = mem_lookup_user(username.val, &user);
 
     if (lookup_res == MEM_OK) {
         command_err(&res, "ERROR: Cannot login twice.");
+        str_destroy(username);
+        str_destroy(password);
         return res;
     }
 
     if (lookup_res == MEM_NOTFOUND) {
         // password was specified. login or register
-        if (password != NULL) {
+        if (!str_is_nil(password)) {
             // TODO: lookup from persistent store and authenticate
             // user = ...
 
             // atm we dont have a persistent store, so create a new user
             printf("Registering with password.");
-            user = new_user_with_name(username);
+            user = new_user_with_name(username.val);
         } else {
-            user = new_user_with_name(username);
+            user = new_user_with_name(username.val);
         }
         mem_store_user(user);
     }
@@ -102,48 +100,51 @@ user_reg(const command_t *cmd) {
     sprintf(msg, "Welcome %s. Join a room with 'JOIN room'", user->username);
 
     command_ok(&res, msg);
+    str_destroy(username);
+    str_destroy(password);
     return res;
 }
 
 /* Get a room.
 params:
     user: the user who will join the room
-    cmd: the actual command
-    str: string residue from strtok_r */
+    cmd: the actual command*/
 static command_result_t
-user_join(user_t * const user, const command_t *cmd) {
-    char *saveptr = NULL;
-    char *room_name;
+user_join(command_t cmd, user_t * const user) {
     command_result_t res;
+    tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
 
-    room_name = strtok_r(cmd->args, COMMAND_DELIM, &saveptr);
+    string room_name = str_tok(&tok, SEP_EXCL);
 
-    if (room_name == NULL) {
+    if (str_is_nil(room_name)) {
         // error: no rome name
         command_parse_error(&res);
+        str_destroy(room_name);
         return res;
     }
 
     room_t *room = NULL;
-    mem_res l_res = mem_lookup_room(room_name, &room);
+    mem_res l_res = mem_lookup_room(room_name.val, &room);
     switch (l_res) {
     case MEM_OK:
         room_add_user(room, user, 0);
         break;
     case MEM_NOTFOUND:
-        room = room_new(room_name);
+        room = room_new(room_name.val);
         room_add_user(room, user, 1);
         // TODO: error handling?
         mem_store_room(room);
         break;
     default:
         command_err(&res, "Unspecified error. Could not join the room.");
+        str_destroy(room_name);
         return res;
     }
 
     char msg[100];
-    sprintf(msg, "Joined %s room.", room_name);
+    sprintf(msg, "Joined %s room.", room_name.val);
     command_ok(&res, msg);
+    str_destroy(room_name);
     return res;
 }
 

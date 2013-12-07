@@ -2,6 +2,7 @@
 #define _COMMNAD_H
 
 #include "user.h"
+#include "string.h"
 
 /*
  * Command codes
@@ -61,26 +62,28 @@
 
 typedef int command_code_t;
 
-typedef struct {
+struct __command_result {
     command_code_t code;
     char *msg;
-} command_result_t;
+};
 
-typedef struct
-{
-    command_code_t code;
-    char *args;
-} command_t;
+struct __command {
+    const command_code_t code;
+    string args;
+};
 
-// Instantiates a new command struct.
-command_t* new_command();
+typedef struct __command command_t;
+typedef struct __command_result command_result_t;
+
+/* New command with code and args */
+command_t command_new(command_code_t, string);
 
 // Frees the command struct and its content
-void free_command(command_t* cmd);
+void command_free(command_t cmd);
 
 /**
  * Execute command.
  */
-command_result_t command_execute(user_t * const user, command_t *cmd);
+command_result_t command_execute(command_t cmd, user_t * const user);
 
 #endif

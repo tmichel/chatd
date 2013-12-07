@@ -74,6 +74,12 @@ str_eq(string s1, string s2) {
     return strcmp(s1.val, s2.val) == 0;
 }
 
+string
+str_trim(string str) {
+    return NIL;
+}
+
+
 tok_t
 str_tok_init(char sep, string str) {
     tok_t token = {sep, str, 0, 0};
