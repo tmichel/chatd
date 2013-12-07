@@ -106,9 +106,9 @@ user_reg(command_t cmd) {
 
             // atm we dont have a persistent store, so create a new user
             printf("Registering with password.");
-            user = new_user_with_name(username.val);
+            user = user_new_with_name(username.val);
         } else {
-            user = new_user_with_name(username.val);
+            user = user_new_with_name(username.val);
         }
         mem_store_user(user);
     }

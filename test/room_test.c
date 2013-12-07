@@ -7,7 +7,7 @@
 #include "../src/command.h"
 
 void add_user_to_room(test_t *t) {
-    user_t *u = new_user();
+    user_t *u = user_new();
     room_t *r = room_new("test");
 
     room_add_user(r, u, 0);
@@ -20,7 +20,7 @@ void add_user_to_room(test_t *t) {
 }
 
 void add_user_to_room_as_admin(test_t *t) {
-    user_t *u = new_user();
+    user_t *u = user_new();
     room_t *r = room_new("test");
 
     room_add_user(r, u, 1);
@@ -32,7 +32,7 @@ void add_user_to_room_as_admin(test_t *t) {
 
 void talk_in_room_when_user_is_not_in(test_t *t) {
     room_t *room = room_new("test");
-    user_t *user = new_user();
+    user_t *user = user_new();
 
     cr_t res = room_send_msg(room, user, str_new("hello"));
 
@@ -43,7 +43,7 @@ void talk_in_room_when_user_is_not_in(test_t *t) {
 
 void talk_in_room_where_banned(test_t *t) {
     room_t *room = room_new("test");
-    user_t *user = new_user("user");
+    user_t *user = user_new("user");
 
     vec_add(room->banned, user);
 

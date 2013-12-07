@@ -5,7 +5,7 @@
 
 void test_create_new_user_with_name(test_t *t) {
     user_t *user = NULL;
-    user = new_user_with_name("test");
+    user = user_new_with_name("test");
 
     assert(t,"User is nil.", NULL != user);
     assert_eq_str(t,"test", user->username);

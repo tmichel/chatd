@@ -11,7 +11,7 @@
 
 void test_join_existing_room(test_t *t) {
     mem_init();
-    user_t *u = new_user();
+    user_t *u = user_new();
     room_t *r = room_new("test");
     mem_store_room(r);
 
@@ -25,7 +25,7 @@ void test_join_existing_room(test_t *t) {
 
 void test_join_new_room(test_t *t) {
     mem_init();
-    user_t *u = new_user();
+    user_t *u = user_new();
 
     command_t c = command_new(CMD_JOIN, str_new("test"));
 

@@ -8,9 +8,9 @@ typedef struct {
     int sock;
 } user_t;
 
-user_t* new_user();
+user_t* user_new();
 
-user_t* new_user_with_name(const char *username);
+user_t* user_new_with_name(const char *username);
 
 void free_user(user_t *user);
 

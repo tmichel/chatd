@@ -8,7 +8,7 @@
 void test_store_user(test_t *t) {
     mem_init();
 
-    user_t* user = new_user();
+    user_t* user = user_new();
     mem_res res = mem_store_user(user);
 
     assert_eq_int(t,res, MEM_OK);
@@ -18,7 +18,7 @@ void test_store_user(test_t *t) {
 
 void test_lookup_existing_user(test_t *t) {
     mem_init();
-    user_t *user = new_user_with_name("test");
+    user_t *user = user_new_with_name("test");
     mem_store_user(user);
 
     user_t *found = NULL;
@@ -33,7 +33,7 @@ void test_lookup_existing_user(test_t *t) {
 
 void test_lookup_non_exsisting_user(test_t *t) {
     mem_init();
-    user_t *user = new_user_with_name("test");
+    user_t *user = user_new_with_name("test");
     mem_store_user(user);
 
     user_t *found = NULL;
