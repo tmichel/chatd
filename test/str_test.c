@@ -178,6 +178,7 @@ int main() {
         test(tokenizer_returns_rest_of_string_when_no_more_sep),
         test(trim_whitespace),
         test(tokenizer_returns_nil_when_no_more_tokens_found),
+        test(substring_return_rest),
     };
 
     for (int i = 0; i < TEST_COUNT && tests[i] != NULL; ++i)
