@@ -7,15 +7,25 @@
 #include "mem.h"
 #include "room.h"
 
+struct room_req {
+    command_t cmd;
+    user_t *user;
+    string room_name;
+    tok_t tok;
+    cr_t *res;
+};
+
 static void make_result(cr_t *res, cc_t code, char *msg);
 static void command_ok(cr_t *res, char *msg);
 static void command_err(cr_t *res, char *msg);
 static void command_parse_error(cr_t *res);
 static cr_t user_reg(command_t cmd);
 static cr_t user_join(command_t cmd, user_t* const user);
+static cr_t user_leave(command_t cmd, user_t* const user);
 static cr_t user_talk(command_t cmd, user_t* const user);
 static cr_t user_change_pwd(user_t* const user, const command_t *cmd);
 static cr_t user_exit(command_t cmd, user_t* const user);
+static cr_t exec_room(command_t cmd, user_t* const user, void (*f)(struct room_req));
 
 command_t
 command_new(cc_t code, string args) {
@@ -212,6 +222,33 @@ user_exit(command_t cmd, user_t * const user) {
 
     return cr_ok();
 }
+
+static cr_t
+user_leave(command_t cmd, user_t * const user) {
+    cr_t res = cr_init();
+    return res;
+}
+
+static cr_t
+exec_room(command_t cmd, user_t* const user, void (*exec)(struct room_req)) {
+    cr_t res = cr_init();
+    tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
+    room_t *room = NULL;
+
+    string rname = str_tok(&tok, SEP_EXCL);
+    if (str_is_nil(rname)) {
+        command_parse_error(&res);
+    } else if (mem_lookup_room(rname.val, &room) == MEM_OK) {
+        struct room_req req = {cmd, user, rname, tok, &res};
+        exec(req);
+    } else {
+        make_result(&res, CMD_RES_NO_ROOM, "No such room");
+    }
+
+    str_destroy(rname);
+    return res;
+}
+
 
 static void
 make_result(cr_t *res, cc_t code, char *msg) {

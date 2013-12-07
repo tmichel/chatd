@@ -18,6 +18,8 @@ parse_command(string cmd_in) {
         result = CMD_JOIN;
     } else if (strcmp(s.val, CMD_TALK_STR) == 0) {
         result = CMD_TALK;
+    } else if (strcmp(s.val, CMD_LEAVE_STR) == 0) {
+        result = CMD_LEAVE;
     }
 
     str_destroy(s);

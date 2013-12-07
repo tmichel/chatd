@@ -48,6 +48,13 @@ szükséges.
 Amennyiben a szoba még nem létezik, akkor újat hozunk létre. Ha már létezik,
 akkor csak belépünk.
 
+### Szoba elhagyása
+
+    LEAVE room
+
+Ha utolsóként hagyjuk el a szobát, akkor az megszűnik. Olyan szobából, aminek
+nem vagyunk tagjai, nem tudunk kilépni. Ilyenkor hibaüzenet érkezik válaszként.
+
 ### Üzenet küldése a szobába
 
     TALK room message

@@ -52,6 +52,14 @@
 #define CMD_TALK_STR "TALK"
 
 /*
+ * User talks in a room.
+ *
+ * TALK room message
+ */
+#define CMD_LEAVE 6
+#define CMD_LEAVE_STR "LEAVE"
+
+/*
  * Command results;
  * Values are >= 100
  */
