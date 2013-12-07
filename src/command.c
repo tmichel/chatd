@@ -32,6 +32,11 @@ command_result_t
 command_execute(user_t * const user, command_t *cmd) {
     command_result_t res;
 
+    if (cmd->code == CMD_PARSE_ERROR) {
+        command_parse_error(&res);
+        return res;
+    }
+
     // everything needs a user except REG
     if (cmd->code != CMD_REG && user == NULL) {
         make_result(&res, CMD_RES_NO_USR, "No user found for connection.");

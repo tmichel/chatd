@@ -21,6 +21,7 @@ static void handle_conn(int client_sock);
 static int handle_message(char *buf, size_t len, command_result_t *res);
 static int open_serv_sock(const int port, const int max_conn);
 static void send_response(int sock, command_result_t res);
+static void send_welcome(int sock);
 
 int start_server(const int port, const int max_conn)
 {
@@ -54,13 +55,12 @@ int start_server(const int port, const int max_conn)
 
 static void
 send_response(int sock, command_result_t res) {
-    char *response = calloc(sizeof(char), sizeof(char) * MAX_RESPONSE_SIZE);
+    char response[MAX_RESPONSE_SIZE] = {0};
     int len = sprintf(response, "%d %s\n", res.code, res.msg);
 
     if (write(sock, response, len) < 0) {
         // TODO: log error
     }
-    free(response);
 }
 
 static int
@@ -118,8 +118,9 @@ handle_message(char *buf, size_t len, command_result_t *res) {
 
 static void
 handle_conn(int client_sock) {
-    char buf[MAX_DATA_SIZE] = {0};
+    send_welcome(client_sock);
 
+    char buf[MAX_DATA_SIZE] = {0};
     int len = 0;
     int quit = 0;
 
@@ -132,4 +133,15 @@ handle_conn(int client_sock) {
     }
     printf("Client exited.\n");
     close(client_sock);
+}
+
+static void
+send_welcome(int sock) {
+    char msg[60] = {0};
+    sprintf(msg, "Welcome!\n"
+                 "To register your nick send 'REG nick [password]'\n");
+
+    if (write(sock, msg, strlen(msg)) < 0) {
+        // TODO: log error
+    }
 }
