@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 #define MAX_MESSAGE_SIZE 2048
-#define MESSAGE_FORMAT "[%s] <%s> %s"
+#define MESSAGE_FORMAT "[%s] <%s> %s\n"
 
 room_t*
 room_new(const char *name) {

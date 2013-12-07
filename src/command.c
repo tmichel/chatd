@@ -80,7 +80,7 @@ command_execute(command_t cmd, user_t * const user) {
 /* User registration. */
 static cr_t
 user_reg(command_t cmd) {
-    cr_t res;
+    cr_t res = cr_init();
     tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
 
     string username = str_tok(&tok, SEP_EXCL);
@@ -135,7 +135,7 @@ params:
     cmd: the actual command*/
 static cr_t
 user_join(command_t cmd, user_t * const user) {
-    cr_t res;
+    cr_t res = cr_init();
     tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
 
     string room_name = str_tok(&tok, SEP_EXCL);
@@ -174,7 +174,7 @@ user_join(command_t cmd, user_t * const user) {
 
 static cr_t
 user_talk(command_t cmd, user_t * const user) {
-    cr_t res;
+    cr_t res = cr_init();
     tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
     room_t *room = NULL;
 

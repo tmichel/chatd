@@ -31,6 +31,9 @@ clean:
 	-rm -rf $(OBJDIR)
 	-rm -rf $(TESTOUTDIR)
 
+debug: clean
+	cc $(CFLAGS) -g -o chatd src/*.c
+
 # for testing
 
 $(TESTOUTDIR):
