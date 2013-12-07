@@ -5,9 +5,10 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#define SYSMSG_BUF_SIZE 255
 #define MAX_MESSAGE_SIZE 2048
-#define MESSAGE_FORMAT "[%s] <%s> %s\n"
-#define MESSAGE_ADMIN_FORMAT "[%s] <@%s> %s\n"
+#define MESSAGE_FORMAT "#%s <%s> %s\n"
+#define MESSAGE_ADMIN_FORMAT "#%s <@%s> %s\n"
 
 static void broadcast(room_t * const, char *);
 static int is_admin(room_t * const, user_t * const);
@@ -44,6 +45,10 @@ room_add_user(room_t *room, user_t * const user, int is_admin) {
     if(is_admin) {
         vec_add(room->admins, user);
     }
+
+    char buf[SYSMSG_BUF_SIZE] = {0};
+    snprintf(buf, SYSMSG_BUF_SIZE, "* * * <%s> joined #%s.\n", user->username, room->name);
+    broadcast(room, buf);
 }
 
 void
@@ -53,8 +58,8 @@ room_remove_user(room_t *room, user_t * const user) {
     vec_remove(room->admins, user);
     vec_remove(room->banned, user);
 
-    char buf[100] = {0};
-    snprintf(buf, 100, "* * * '%s' is leaving...", user->username);
+    char buf[SYSMSG_BUF_SIZE] = {0};
+    snprintf(buf, SYSMSG_BUF_SIZE, "* * * <%s> is leaving #%s\n", user->username, room->name);
     broadcast(room, buf);
 }
 
@@ -88,7 +93,9 @@ broadcast(room_t * const room, char* message) {
     // broadcast message
     for (int i = 0; i < vec_size(room->users); ++i) {
         if (vec_get(room->users, i, (any_t*)&u) == 0) {
-            write(u->sock, message, strlen(message));
+            if (write(u->sock, message, strlen(message)) < 0) {
+                // TODO: log error
+            }
         }
     }
 }

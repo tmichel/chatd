@@ -122,7 +122,7 @@ user_reg(command_t cmd) {
     }
 
     char msg[100];
-    sprintf(msg, "Welcome %s. Join a room with 'JOIN room'", user->username);
+    sprintf(msg, "Welcome <%s>. Join a room with 'JOIN room'", user->username);
 
     command_ok(&res, msg);
     res.user = user;
@@ -168,7 +168,7 @@ user_join(command_t cmd, user_t * const user) {
     }
 
     char msg[100];
-    sprintf(msg, "Joined room '%s', which currently has %d user(s).", room_name.val, vec_size(room->users));
+    sprintf(msg, "Joined room #%s, which currently has %d user(s).", room_name.val, vec_size(room->users));
     command_ok(&res, msg);
     str_destroy(room_name);
     return res;
