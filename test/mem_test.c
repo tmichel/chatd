@@ -13,7 +13,7 @@ void test_store_user(test_t *t) {
 
     assert_eq_int(t,res, MEM_OK);
 
-    free_user(user);
+    user_free(user);
 }
 
 void test_lookup_existing_user(test_t *t) {
@@ -28,7 +28,7 @@ void test_lookup_existing_user(test_t *t) {
     assert_eq_int(t,MEM_OK, res);
     assert_eq_str(t,"test", found->username);
 
-    free_user(user);
+    user_free(user);
 }
 
 void test_lookup_non_exsisting_user(test_t *t) {
@@ -43,7 +43,7 @@ void test_lookup_non_exsisting_user(test_t *t) {
     assert_eq_int(t,MEM_NOTFOUND, res);
     assert(t,"'found' is not nil", NULL == found);
 
-    free_user(user);
+    user_free(user);
 }
 
 #define TEST_COUNT 100

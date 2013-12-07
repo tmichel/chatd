@@ -23,7 +23,7 @@ user_new_with_name(const char *username) {
 }
 
 void
-free_user(user_t *user) {
+user_free(user_t *user) {
     free(user->username);
     free(user);
 }

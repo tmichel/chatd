@@ -10,7 +10,7 @@ void test_create_new_user_with_name(test_t *t) {
     assert(t,"User is nil.", NULL != user);
     assert_eq_str(t,"test", user->username);
 
-    free_user(user);
+    user_free(user);
 }
 
 #define TEST_COUNT 100

@@ -15,7 +15,7 @@ void add_user_to_room(test_t *t) {
     assert_eq_int(t, 1, r->users->len);
     assert_eq_int(t, 0, r->admins->len);
 
-    free_user(u);
+    user_free(u);
     room_free(r);
 }
 
@@ -26,7 +26,7 @@ void add_user_to_room_as_admin(test_t *t) {
     room_add_user(r, u, 1);
 
     assert_eq_int(t, 1, r->admins->len);
-    free_user(u);
+    user_free(u);
     room_free(r);
 }
 
@@ -37,7 +37,7 @@ void talk_in_room_when_user_is_not_in(test_t *t) {
     cr_t res = room_send_msg(room, user, str_new("hello"));
 
     assert_eq_int(t, CMD_RES_NO_USR, res.code);
-    free_user(user);
+    user_free(user);
     room_free(room);
 }
 
@@ -50,7 +50,7 @@ void talk_in_room_where_banned(test_t *t) {
     cr_t res = room_send_msg(room, user, str_new("hello"));
 
     assert_eq_int(t, CMD_RES_USR_BND, res.code);
-    free_user(user);
+    user_free(user);
     room_free(room);
 }
 
