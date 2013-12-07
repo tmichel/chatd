@@ -38,7 +38,7 @@ parse(string in) {
 
     if (tok.has_more) {
         // only when there is a leftover
-        string sub = str_sub(in, tok.start, -1);
+        string sub = str_tok_rest(tok);
         string trim = str_trim(sub);
         str_destroy(sub);
         str_destroy(command_str);

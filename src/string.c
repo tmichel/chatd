@@ -125,3 +125,8 @@ str_tok(tok_t *tok, int include_sep) {
     return token;
 }
 
+string
+str_tok_rest(tok_t tok) {
+    return str_sub(tok.str, tok.start, -1);
+}
+

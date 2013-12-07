@@ -48,4 +48,6 @@ tok_t str_tok_init(char, string);
 
 string str_tok(tok_t*,int);
 
+string str_tok_rest(tok_t);
+
 #endif
