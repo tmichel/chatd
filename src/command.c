@@ -65,6 +65,8 @@ command_execute(command_t cmd, user_t * const user) {
         return user_reg(cmd);
     case CMD_JOIN:
         return user_join(cmd, user);
+    case CMD_TALK:
+        return user_talk(cmd, user);
     }
 
     command_parse_error(&res);
