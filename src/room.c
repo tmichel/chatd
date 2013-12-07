@@ -17,9 +17,10 @@ room_new(const char *name) {
     room->name = (char*)calloc(sizeof(char), sizeof(char) * (len + 1));
     strcpy(room->name, name);
 
-    // init users, admin
+    // init users, admin, banned
     room->users = vec_new();
     room->admins = vec_new();
+    room->banned = vec_new();
 
     return room;
 }
@@ -29,6 +30,7 @@ room_free(room_t *room) {
     free(room->name);
     vec_free(room->users);
     vec_free(room->admins);
+    vec_free(room->banned);
     free(room);
 }
 
