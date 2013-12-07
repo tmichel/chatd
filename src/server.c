@@ -141,6 +141,7 @@ handle_conn(int client_sock) {
     }
 
     user_free(user);
+    // TODO: sys log user exit
     printf("Client exited.\n");
     close(client_sock);
 }

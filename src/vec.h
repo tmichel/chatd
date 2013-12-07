@@ -16,7 +16,7 @@ void vec_free(vec_t *vec);
 
 void vec_add(vec_t *vec, any_t value);
 
-void vec_remove(vec_t *vec, any_t value);
+int vec_remove(vec_t *vec, any_t value);
 
 int vec_get(vec_t *vec, int idx, any_t *res);
 

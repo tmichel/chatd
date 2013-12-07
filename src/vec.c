@@ -25,12 +25,26 @@ void vec_add(vec_t *vec, any_t value) {
     }
 
     vec->data[vec->len] = value;
-    ++vec->len;
+    ++(vec->len);
 }
 
-void vec_remove(vec_t *vec, any_t value) {
-    printf("vec_removed called. implement it first");
-    exit(1);
+int vec_remove(vec_t *vec, any_t value) {
+    int i = 0;
+    // get the index
+    while (i < vec->len && vec->data[i] != value) ;
+
+    if (i >= vec->len)
+        // could not find it
+        return 0;
+
+    // rearrange data
+    for (int j = i + 1; j < vec->len; ++j) {
+        vec->data[j-1] = vec->data[j];
+    }
+
+    --(vec->len);
+
+    return 1;
 }
 
 int vec_get(vec_t *vec, int idx, any_t* res) {

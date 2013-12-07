@@ -15,7 +15,7 @@ static cr_t user_reg(command_t cmd);
 static cr_t user_join(command_t cmd, user_t* const user);
 static cr_t user_talk(command_t cmd, user_t* const user);
 static cr_t user_change_pwd(user_t* const user, const command_t *cmd);
-static cr_t user_exit(user_t* const user, const command_t *cmd);
+static cr_t user_exit(command_t cmd, user_t* const user);
 
 command_t
 command_new(cc_t code, string args) {
@@ -71,6 +71,8 @@ command_execute(command_t cmd, user_t * const user) {
         return user_join(cmd, user);
     case CMD_TALK:
         return user_talk(cmd, user);
+    case CMD_EXIT:
+        return user_exit(cmd, user);
     }
 
     command_parse_error(&res);
@@ -192,6 +194,18 @@ user_talk(command_t cmd, user_t * const user) {
 
     str_destroy(room_name);
     return res;
+}
+
+static cr_t
+user_exit(command_t cmd, user_t * const user) {
+    // remove user from every room she's in.
+    room_t *r;
+    for (int i = 0; i < vec_size(user->rooms); ++i) {
+        vec_get(user->rooms, i, (any_t*)&r);
+        room_remove_user(r, user);
+    }
+
+    return cr_ok();
 }
 
 static void
