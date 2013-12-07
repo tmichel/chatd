@@ -6,6 +6,7 @@
 typedef struct {
     char *username;
     int sock;
+    vec_t *rooms;
 } user_t;
 
 user_t* user_new();

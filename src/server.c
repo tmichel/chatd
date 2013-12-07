@@ -139,6 +139,8 @@ handle_conn(int client_sock) {
         free(res.msg);
         memset(buf, 0, len);
     }
+
+    user_free(user);
     printf("Client exited.\n");
     close(client_sock);
 }

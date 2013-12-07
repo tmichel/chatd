@@ -6,8 +6,7 @@
 
 string
 str_newn(const char *str, int n) {
-    char *cpy = (char*)calloc(sizeof(char), sizeof(char) * (n+1));
-    strncpy(cpy, str, n);
+    char *cpy = strndup(str, n);
 
     string s = { n, cpy };
     return s;

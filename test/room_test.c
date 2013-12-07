@@ -43,7 +43,7 @@ void talk_in_room_when_user_is_not_in(test_t *t) {
 
 void talk_in_room_where_banned(test_t *t) {
     room_t *room = room_new("test");
-    user_t *user = user_new("user");
+    user_t *user = user_new();
 
     vec_add(room->banned, user);
 

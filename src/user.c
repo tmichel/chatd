@@ -5,6 +5,7 @@
 user_t*
 user_new() {
     user_t* user = (user_t*)malloc(sizeof(user_t));
+    user->rooms = vec_new();
     user->username = NULL;
     user->sock = -1;
 
@@ -14,16 +15,14 @@ user_new() {
 user_t*
 user_new_with_name(const char *username) {
     user_t *user = user_new();
-
-    int len = strlen(username);
-    user->username = (char*)calloc(sizeof(char), sizeof(char) * (len+1));
-    strcpy(user->username, username);
+    user->username = strdup(username);
 
     return user;
 }
 
 void
 user_free(user_t *user) {
+    vec_free(user->rooms);
     free(user->username);
     free(user);
 }

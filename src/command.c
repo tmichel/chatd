@@ -38,8 +38,8 @@ cr_t
 cr_create(cc_t code, char *msg) {
     cr_t res = cr_init();
 
-    res.msg = (char*)calloc(sizeof(char), sizeof(char) * (strlen(msg) + 1));
-    strcpy(res.msg, msg);
+    res.code = code;
+    res.msg = strdup(msg);
 
     return res;
 }
@@ -197,10 +197,7 @@ user_talk(command_t cmd, user_t * const user) {
 static void
 make_result(cr_t *res, cc_t code, char *msg) {
     res->code = code;
-
-    int len = strlen(msg);
-    res->msg = (char*)calloc(sizeof(char), sizeof(char) * (len + 1));
-    strcpy(res->msg, msg);
+    res->msg = strdup(msg);
 }
 
 static void
