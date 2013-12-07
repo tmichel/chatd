@@ -8,7 +8,6 @@
 #include "server.h"
 #include "command.h"
 #include "parser.h"
-#include "util.h"
 #include "string.h"
 
 #define MAX_DATA_SIZE 1024
@@ -130,7 +129,7 @@ handle_conn(int client_sock) {
         quit = handle_message(in, &res);
         send_response(client_sock, res);
         free(res.msg);
-        empty(buf, len);
+        memset(buf, 0, len);
     }
     printf("Client exited.\n");
     close(client_sock);

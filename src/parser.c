@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 #include "parser.h"
-#include "util.h"
 
 static cc_t
 parse_command(string cmd_in) {
