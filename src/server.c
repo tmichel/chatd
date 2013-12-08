@@ -11,6 +11,7 @@
 #include "parser.h"
 #include "string.h"
 #include "const.h"
+#include "user.h"
 
 #define MAX_DATA_SIZE 1024
 #define MAX_RESPONSE_SIZE 1024

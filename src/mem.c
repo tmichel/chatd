@@ -2,6 +2,7 @@
 #include <string.h>
 #include "mem.h"
 #include "vec.h"
+#include "const.h"
 
 vec_t *users = NULL;
 vec_t *rooms = NULL;

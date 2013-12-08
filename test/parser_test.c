@@ -4,6 +4,7 @@
 #include "assert.h"
 
 #include "../src/parser.h"
+#include "../src/const.h"
 
 void test_parse_reg(test_t *t) {
     command_t cmd = parse(str_new("REG test pass"));

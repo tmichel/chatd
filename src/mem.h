@@ -1,11 +1,7 @@
 #ifndef _MEM_H
 #define _MEM_H
 
-#include "user.h"
-#include "room.h"
-
-#define MEM_OK        0
-#define MEM_NOTFOUND  1
+#include "types.h"
 
 typedef int mem_res;
 

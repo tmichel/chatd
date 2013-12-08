@@ -3,6 +3,8 @@
 
 #include "../src/user.h"
 #include "../src/mem.h"
+#include "../src/const.h"
+#include "../src/const.h"
 
 
 void test_store_user(test_t *t) {

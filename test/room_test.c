@@ -5,6 +5,7 @@
 
 #include "../src/room.h"
 #include "../src/command.h"
+#include "../src/const.h"
 
 void add_user_to_room(test_t *t) {
     user_t *u = user_new();

@@ -4,8 +4,7 @@
 #ifndef _PARSER_H
 #define _PARSER_H
 
-#include "command.h"
-#include "string.h"
+#include "types.h"
 
 /*
  * Parse the raw input into a command_t struct.

@@ -1,16 +1,7 @@
 #ifndef _ROOM_H
 #define _ROOM_H
 
-#include "user.h"
-#include "string.h"
-#include "command.h"
-
-typedef struct {
-    char *name;
-    vec_t *admins;
-    vec_t *users;
-    vec_t *banned;
-} room_t;
+#include "types.h"
 
 room_t *room_new(const char *name);
 

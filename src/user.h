@@ -1,13 +1,7 @@
 #ifndef _USER_H
 #define _USER_H
 
-#include "vec.h"
-
-typedef struct {
-    char *username;
-    int sock;
-    vec_t *rooms;
-} user_t;
+#include "types.h"
 
 user_t* user_new();
 

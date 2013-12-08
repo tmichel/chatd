@@ -1,25 +1,7 @@
 #ifndef _COMMNAD_H
 #define _COMMNAD_H
 
-#include "user.h"
-#include "string.h"
-
-/* Command code, an alias for int */
-typedef int cc_t;
-
-struct __command_result {
-    cc_t code;
-    char *msg;
-    user_t *user;
-};
-
-struct __command {
-    const cc_t code;
-    string args;
-};
-
-typedef struct __command command_t;
-typedef struct __command_result cr_t;
+#include "types.h"
 
 /* New command with code and args */
 command_t command_new(cc_t, string);

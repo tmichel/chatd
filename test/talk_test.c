@@ -3,6 +3,7 @@
 
 #include "../src/mem.h"
 #include "../src/command.h"
+#include "../src/const.h"
 
 #define TEST_COUNT 100
 

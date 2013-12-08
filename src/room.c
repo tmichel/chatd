@@ -1,5 +1,6 @@
 #include "const.h"
 #include "room.h"
+#include "command.h"
 
 #include <stdlib.h>
 #include <string.h>

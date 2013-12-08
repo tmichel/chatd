@@ -5,6 +5,7 @@
 #include "const.h"
 #include "command.h"
 #include "mem.h"
+#include "user.h"
 #include "room.h"
 
 struct room_req {

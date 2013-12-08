@@ -3,6 +3,7 @@
 #include "../src/user.h"
 #include "../src/command.h"
 #include "../src/mem.h"
+#include "../src/const.h"
 
 #include <stdlib.h>
 #include <string.h>
