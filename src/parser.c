@@ -22,6 +22,8 @@ parse_command(string cmd_in) {
         result = CMD_TALK;
     } else if (strcmp(s.val, CMD_LEAVE_STR) == 0) {
         result = CMD_LEAVE;
+    } else if (strcmp(s.val, CMD_MSG_STR) == 0) {
+        result = CMD_MSG;
     }
 
     str_destroy(s);

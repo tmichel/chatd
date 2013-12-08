@@ -24,8 +24,8 @@ static cr_t user_reg(command_t cmd);
 static cr_t user_join(command_t cmd, user_t* const user);
 static void user_leave(struct room_req);
 static void user_talk(struct room_req);
-static cr_t user_change_pwd(user_t* const user, const command_t *cmd);
 static cr_t user_exit(command_t cmd, user_t* const user);
+static cr_t user_msg(command_t cmd, user_t* const user);
 static cr_t exec_room(command_t cmd, user_t* const user, void (*f)(struct room_req));
 
 command_t
@@ -86,6 +86,8 @@ command_execute(command_t cmd, user_t * const user) {
         return exec_room(cmd, user, user_leave);
     case CMD_EXIT:
         return user_exit(cmd, user);
+    case CMD_MSG:
+        return user_msg(cmd, user);
     }
 
     command_parse_error(&res);
@@ -223,6 +225,27 @@ user_leave(struct room_req req) {
 }
 
 static cr_t
+user_msg(command_t cmd, user_t * const sender) {
+    cr_t res = cr_init();
+    tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
+    user_t *receiver = NULL;
+
+    string uname = str_tok(&tok, SEP_EXCL);
+    if (str_is_nil(uname)) {
+        command_parse_error(&res);
+    } else if (mem_lookup_user(uname.val, &receiver) == MEM_OK) {
+        string rest = str_tok_rest(tok);
+        res = user_message(sender, receiver, rest);
+        str_destroy(rest);
+    } else {
+        make_result(&res, CMD_RES_NO_USR, "No user with that name.");
+    }
+
+    str_destroy(uname);
+    return res;
+}
+
+static cr_t
 exec_room(command_t cmd, user_t* const user, void (*exec)(struct room_req)) {
     cr_t res = cr_init();
     tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
@@ -241,7 +264,6 @@ exec_room(command_t cmd, user_t* const user, void (*exec)(struct room_req)) {
     str_destroy(rname);
     return res;
 }
-
 
 static void
 make_result(cr_t *res, cc_t code, char *msg) {
