@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [[ -z $1 ]]; then
+    echo "provide test source to compile"
+    exit
+fi
+
+SRC=`find ./src \( -name "*.c" ! -name "main.c" \)`
+gcc -g -pthread $SRC $1 test/assert.c -std=gnu99 -o td
+
+gdb td

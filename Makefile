@@ -5,7 +5,7 @@ OBJDIR = obj
 TESTDIR = test
 TESTOUTDIR = test_ex
 
-CFLAGS = -Wall -pedantic -std=gnu99
+CFLAGS = -Wall -pedantic -std=gnu99 -pthread
 SOURCES = $(wildcard $(SRCDIR)/*.c)
 SOURCES := $(filter-out src/main.c, $(SOURCES))
 TESTSRC = $(wildcard $(TESTDIR)/*_test.c)
@@ -15,7 +15,7 @@ TEST_O = $(TESTSRC:$(TESTDIR)/%.c=$(TESTOUTDIR)/%)
 all: $(OBJDIR) chatd
 
 chatd: $(OBJS) obj/main.o
-	cc $(OBJS) obj/main.o -o chatd
+	cc $(CFLAGS) $(OBJS) obj/main.o -o chatd
 
 $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	cc $(CFLAGS) -c $< -o $@
