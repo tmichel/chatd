@@ -4,6 +4,7 @@
 #define TEST_COUNT 100
 
 #include "../src/room.h"
+#include "../src/user.h"
 #include "../src/command.h"
 #include "../src/const.h"
 

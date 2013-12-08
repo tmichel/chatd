@@ -6,6 +6,7 @@
 #include "../src/command.h"
 #include "../src/mem.h"
 #include "../src/room.h"
+#include "../src/user.h"
 #include "../src/const.h"
 
 #define TEST_COUNT 100
@@ -13,6 +14,7 @@
 void test_join_existing_room(test_t *t) {
     mem_init();
     user_t *u = user_new();
+    u->sock = 2;
     room_t *r = room_new("test");
     mem_store_room(r);
 
@@ -27,6 +29,7 @@ void test_join_existing_room(test_t *t) {
 void test_join_new_room(test_t *t) {
     mem_init();
     user_t *u = user_new();
+    u->sock = 2;
 
     command_t c = command_new(CMD_JOIN, str_new("test"));
 

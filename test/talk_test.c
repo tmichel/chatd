@@ -4,6 +4,7 @@
 #include "../src/mem.h"
 #include "../src/command.h"
 #include "../src/const.h"
+#include "../src/user.h"
 
 #define TEST_COUNT 100
 
@@ -24,7 +25,7 @@ void talk_no_args(test_t *t) {
     command_t cmd = command_new(CMD_TALK, str_nil());
     cr_t res = command_execute(cmd, user);
 
-    assert_eq_int(t, CMD_RES_ERR, res.code);
+    assert_eq_int(t, CMD_RES_PARSE_ERR, res.code);
 }
 
 int main() {

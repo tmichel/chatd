@@ -12,7 +12,7 @@ void test_execute_command_with_parse_error(test_t *t) {
     command_t c = command_new(CMD_PARSE_ERROR, NIL);
     cr_t res = command_execute(c, NULL);
 
-    assert_eq_int(t, CMD_RES_ERR, res.code);
+    assert_eq_int(t, CMD_RES_PARSE_ERR, res.code);
 }
 
 void test_execute_command_without_user(test_t *t) {
