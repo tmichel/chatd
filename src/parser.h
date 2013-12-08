@@ -7,8 +7,6 @@
 #include "command.h"
 #include "string.h"
 
-#define COMMAND_DELIM ' '
-
 /*
  * Parse the raw input into a command_t struct.
  */

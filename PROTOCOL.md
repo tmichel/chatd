@@ -65,3 +65,11 @@ teljesül:
 * a felhasználó nincs a szobában
 * nincs ilyen szoba
 * nincs a felhasználónak joga beszélni a szobában.
+
+### Privát üzenet
+
+    MSG user message
+
+Privát üzenet küldése egy másik felhasználónak. Ezt csak a másik felhasználó
+kapja meg. Ha nincs bejelentkezett felhasználó _user_ névvel, akkor egy
+hibakódot küld vissza a szerver.

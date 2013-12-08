@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "parser.h"
+#include "const.h"
 #include "command.h"
 #include "mem.h"
 #include "room.h"

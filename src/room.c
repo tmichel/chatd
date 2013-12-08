@@ -1,14 +1,10 @@
+#include "const.h"
 #include "room.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
-
-#define SYSMSG_BUF_SIZE 255
-#define MAX_MESSAGE_SIZE 2048
-#define MESSAGE_FORMAT "#%s <%s> %s\n"
-#define MESSAGE_ADMIN_FORMAT "#%s <@%s> %s\n"
 
 static void broadcast(room_t * const, char *);
 static int is_admin(room_t * const, user_t * const);

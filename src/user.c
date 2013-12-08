@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "user.h"
+#include "const.h"
 
 user_t*
 user_new() {
