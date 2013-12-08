@@ -13,7 +13,7 @@ Sikeres végrehajtás esetén a visszatérési kód:
 
     100 message
 
-A pontos hibakódok megtalálhatóak a `command.h` header fájlban.
+A pontos hibakódok megtalálhatóak a `const.h` header fájlban.
 
 ## Parancsok
 
