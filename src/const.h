@@ -18,26 +18,13 @@
 
 #define CMD_PARSE_ERROR -1
 
-#define CMD_REG 1
-#define CMD_REG_STR "REG"
-
-#define CMD_EXIT 2
-#define CMD_EXIT_STR "EXIT"
-
-#define CMD_PWD 3
-#define CMD_PWD_STR "PWD"
-
-#define CMD_JOIN 4
-#define CMD_JOIN_STR "JOIN"
-
-#define CMD_TALK 5
-#define CMD_TALK_STR "TALK"
-
-#define CMD_LEAVE 6
-#define CMD_LEAVE_STR "LEAVE"
-
-#define CMD_MSG 7
-#define CMD_MSG_STR "MSG"
+#define CMD_REG   0
+#define CMD_EXIT  1
+#define CMD_PWD   2
+#define CMD_JOIN  3
+#define CMD_TALK  4
+#define CMD_LEAVE 5
+#define CMD_MSG   6
 
 #define CMD_RES_NOT_INIT    0
 #define CMD_RES_OK        100

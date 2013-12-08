@@ -5,29 +5,31 @@
 #include "parser.h"
 #include "command.h"
 
+#define CMD_NR 7
+
+char *CMD[CMD_NR] = {
+    /* 0 */ "REG",
+    /* 1 */ "EXIT",
+    /* 2 */ "PWD",
+    /* 3 */ "JOIN",
+    /* 4 */ "TALK",
+    /* 5 */ "LEAVE",
+    /* 6 */ "MSG",
+};
+
 static cc_t
 parse_command(string cmd_in) {
     string s = str_trim(cmd_in);
-    int result = CMD_PARSE_ERROR;
+    cc_t code = CMD_PARSE_ERROR;
 
-    if (strcmp(s.val, CMD_REG_STR) == 0) {
-        result = CMD_REG;
-    } else if (strcmp(s.val, CMD_EXIT_STR) == 0) {
-        result = CMD_EXIT;
-    } else if (strcmp(s.val, CMD_PWD_STR) == 0) {
-        result = CMD_PWD;
-    } else if (strcmp(s.val, CMD_JOIN_STR) == 0) {
-        result = CMD_JOIN;
-    } else if (strcmp(s.val, CMD_TALK_STR) == 0) {
-        result = CMD_TALK;
-    } else if (strcmp(s.val, CMD_LEAVE_STR) == 0) {
-        result = CMD_LEAVE;
-    } else if (strcmp(s.val, CMD_MSG_STR) == 0) {
-        result = CMD_MSG;
+    for (cc_t c = 0; c < CMD_NR; ++c) {
+        if (strcmp(s.val, CMD[c]) == 0) {
+            code = c;
+        }
     }
 
     str_destroy(s);
-    return result;
+    return code;
 }
 
 command_t

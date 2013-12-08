@@ -17,15 +17,15 @@
 #define MAX_RESPONSE_SIZE 100
 
 char *RES_MSG[10] = {
-    "OK",
-    "ERR",
-    "NO SUCH USER",
-    "USER BANNED",
-    "NO_SUCH ROOM",
-    "WRITE ERR",
-    "PARSE ERR",
-    "NO SUCH COMMAND",
-    "USER NAME NOT AVAILABLE"
+    /* 100 */ "OK",
+    /* 101 */ "ERR",
+    /* 102 */ "NO SUCH USER",
+    /* 103 */ "USER BANNED",
+    /* 104 */ "NO_SUCH ROOM",
+    /* 105 */ "WRITE ERR",
+    /* 106 */ "PARSE ERR",
+    /* 107 */ "NO SUCH COMMAND",
+    /* 108 */ "USER NAME NOT AVAILABLE",
 };
 
 /**
