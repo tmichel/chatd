@@ -4,6 +4,8 @@
 
 #include "assert.h"
 
+#define MAX_MESSAGE_SIZE 1024
+
 static void fail(test_t*, char*, char*, int);
 
 test_t* test(test_func f) {
@@ -46,6 +48,9 @@ void print_stats(test_t **tests, int count) {
 }
 
 void _assert(test_t *t, char *msg, int expr, char *file, int line) {
+    // check assertion only if the test has not failed yet
+    if (t->failed) return;
+
     if (!expr) {
         fail(t, msg, file, line);
     }
@@ -57,24 +62,24 @@ void _assert_not(test_t *t, char *msg, int expr, char *file, int line) {
 
 void _assert_eq_str(test_t *t, const char *exp, const char *act, char *file, int line) {
     // TODO: this is not such a good idea. figure out the exact length
-    char msg[1000];
-    sprintf(msg,
+    char *msg = (char*)calloc(sizeof(char), sizeof(char) * MAX_MESSAGE_SIZE);
+    snprintf(msg, MAX_MESSAGE_SIZE,
             "String assertion failed.\n\texpected: \"%s\"\n\tactual: \"%s\"",
             exp, act);
     _assert(t, msg, strcmp(exp, act) == 0, file, line);
 }
 
 void _assert_eq_int(test_t *t, int exp, int act, char *file, int line) {
-    char msg[1000];
-    sprintf(msg,
+    char *msg = (char*)calloc(sizeof(char), sizeof(char) * MAX_MESSAGE_SIZE);
+    snprintf(msg, MAX_MESSAGE_SIZE,
             "Integer assertion failed.\n\texpected: %d\n\tactual: %d",
             exp, act);
     _assert(t, msg, exp == act, file, line);
 }
 
 void _assert_neq_int(test_t *t, int exp, int act, char *file, int line) {
-    char msg[1000];
-    sprintf(msg,
+    char *msg = (char*)calloc(sizeof(char), sizeof(char) * MAX_MESSAGE_SIZE);
+    snprintf(msg, MAX_MESSAGE_SIZE,
             "Integer assertion failed.\n\texpected %d not be %d.",
             exp, act);
     _assert(t, msg, exp != act, file, line);
