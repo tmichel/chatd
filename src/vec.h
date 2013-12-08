@@ -1,6 +1,8 @@
 #ifndef _VEC_H
 #define _VEC_H
 
+#include <pthread.h>
+
 typedef void* any_t;
 
 typedef struct
@@ -8,6 +10,7 @@ typedef struct
     int len;
     int cap;
     any_t *data;
+    pthread_rwlock_t *lock;
 } vec_t;
 
 vec_t *vec_new();
