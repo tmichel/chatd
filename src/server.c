@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #include "server.h"
 #include "command.h"
@@ -17,7 +18,7 @@
  * Handle incoming message from a client.
  * Returns 1 if connection needs to be closed.
  */
-static void handle_conn(int client_sock);
+static void* handle_conn(void* client_sock);
 static int handle_message(string in, user_t * user, /* out */ cr_t *res);
 static int open_serv_sock(const int port, const int max_conn);
 static void send_response(int sock, cr_t res);
@@ -46,7 +47,9 @@ int start_server(const int port, const int max_conn)
         }
 
         // TODO: log client info
-        handle_conn(client_sock);
+        pthread_t tid;
+        pthread_create(&tid, NULL, handle_conn, &client_sock);
+
     }
 
     close(serv_sock);
@@ -116,8 +119,9 @@ handle_message(string in, user_t *user, cr_t *res) {
     return quit;
 }
 
-static void
-handle_conn(int client_sock) {
+static void*
+handle_conn(void *arg) {
+    int client_sock = *((int*)arg);
     send_welcome(client_sock);
 
     char buf[MAX_DATA_SIZE] = {0};
@@ -144,6 +148,8 @@ handle_conn(int client_sock) {
     // TODO: sys log user exit
     printf("Client exited.\n");
     close(client_sock);
+
+    return NULL;
 }
 
 static void

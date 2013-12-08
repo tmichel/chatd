@@ -48,7 +48,7 @@ int vec_remove(vec_t *vec, any_t value) {
     // searching for the item only needs a read lock
     pthread_rwlock_rdlock(vec->lock);
     // get the index
-    while (i < vec->len && vec->data[i] != value) ;
+    while (i < vec->len && vec->data[i] != value) ++i;
     pthread_rwlock_unlock(vec->lock);
 
     if (i >= vec->len) {
