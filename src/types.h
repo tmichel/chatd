@@ -32,7 +32,6 @@ typedef int cc_t;
 
 struct __command_result {
     cc_t code;
-    char *msg;
     user_t *user;
 };
 

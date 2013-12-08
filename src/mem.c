@@ -3,6 +3,7 @@
 #include "mem.h"
 #include "vec.h"
 #include "const.h"
+#include "room.h"
 
 vec_t *users = NULL;
 vec_t *rooms = NULL;
@@ -51,6 +52,7 @@ mem_res
 mem_remove_room(room_t* const room) {
     // TODO: sys log
     int res = vec_remove(rooms, room);
+    room_free(room);
     return (res ? MEM_OK : MEM_NOTFOUND);
 }
 

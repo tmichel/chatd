@@ -34,14 +34,14 @@ user_free(user_t *user) {
 
 cr_t
 user_message(user_t* const sender, user_t* const receiver, string message) {
-    cr_t res = cr_init();
+    cr_t res = cr_empty();
 
     char *msg = (char*)calloc(sizeof(char), sizeof(char) * MAX_MESSAGE_SIZE);
     int len = snprintf(msg, MAX_MESSAGE_SIZE, MESSAGE_PRIV_FORMAT, sender->username, message.val);
 
     if (write(receiver->sock, msg, len) < 0) {
         // TODO write log
-        res = cr_create(CMD_RES_WRT_ERR, "Could not send message");
+        res = cr_create(CMD_RES_WRT_ERR);
     } else {
         res = cr_ok();
     }

@@ -14,7 +14,19 @@
 #include "user.h"
 
 #define MAX_DATA_SIZE 1024
-#define MAX_RESPONSE_SIZE 1024
+#define MAX_RESPONSE_SIZE 100
+
+char *RES_MSG[10] = {
+    "OK",
+    "ERR",
+    "NO SUCH USER",
+    "USER BANNED",
+    "NO_SUCH ROOM",
+    "WRITE ERR",
+    "PARSE ERR",
+    "NO SUCH COMMAND",
+    "USER NAME NOT AVAILABLE"
+};
 
 /**
  * Handle incoming message from a client.
@@ -60,10 +72,19 @@ int start_server(const int port, const int max_conn)
 
 static void
 send_response(int sock, cr_t res) {
-    char response[MAX_RESPONSE_SIZE] = {0};
-    int len = sprintf(response, "%d %s\n", res.code, res.msg);
+    char *desc;
+    if (res.code == CMD_RES_NOT_INIT) {
+        // TODO: log this
+        // something went terribly wrong, got back unitialized command result
+        desc = RES_MSG[CMD_RES_ERR - CMD_RES_OK];
+    } else {
+        desc = RES_MSG[res.code - CMD_RES_OK];
+    }
 
-    if (write(sock, response, len) < 0) {
+    char reply[MAX_RESPONSE_SIZE];
+    snprintf(reply, MAX_RESPONSE_SIZE, "%d %s\n", res.code, desc);
+
+    if (write(sock, reply, strlen(reply)) < 0) {
         // TODO: log error
     }
 }
@@ -109,7 +130,6 @@ handle_message(string in, user_t *user, cr_t *res) {
     // execute command
     cr_t result = command_execute(cmd, user);
     res->code = result.code;
-    res->msg = result.msg;
     res->user = result.user;
 
     if (cmd.code == CMD_EXIT) {
@@ -132,7 +152,7 @@ handle_conn(void *arg) {
     user_t *user = NULL;
 
     while(!quit && (len = read(client_sock, buf, sizeof(buf))) > 0) {
-        cr_t res = cr_init();
+        cr_t res = cr_empty();
         string in = str_newn(buf, len);
         quit = handle_message(in, user, &res);
 
@@ -142,7 +162,6 @@ handle_conn(void *arg) {
         }
 
         send_response(client_sock, res);
-        free(res.msg);
         memset(buf, 0, len);
     }
 
