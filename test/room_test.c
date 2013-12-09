@@ -56,6 +56,37 @@ void talk_in_room_where_banned(test_t *t) {
     room_free(room);
 }
 
+void remove_user_from_room_when_exiting(test_t *t) {
+    room_t *room = room_new("room");
+    user_t *user = user_new_with_name("user");
+    user->sock = 1;
+    vec_add(room->users, user);
+    vec_add(user->rooms, room);
+
+    room_remove_user(room, user);
+
+    assert_not(t, "User was not removed from the room.", vec_contains(room->users, user));
+    assert_not(t, "Room was not removed from user's room list.", vec_contains(user->rooms, room));
+    user_free(user);
+    room_free(room);
+}
+
+void remove_user_from_room(test_t *t) {
+    room_t *room = room_new("room");
+    user_t *user = user_new_with_name("user");
+    user->sock = 1;
+    vec_add(room->users, user);
+    vec_add(user->rooms, room);
+
+    room_remove_user(room, user);
+
+    assert_not(t, "User was not removed from the room.", vec_contains(room->users, user));
+    assert_not(t, "Room was not removed from user's room list.", vec_contains(user->rooms, room));
+    user_free(user);
+    room_free(room);
+
+}
+
 int main()
 {
     test_t *tests[TEST_COUNT] = {
@@ -63,6 +94,8 @@ int main()
         test(add_user_to_room_as_admin),
         test(talk_in_room_when_user_is_not_in),
         test(talk_in_room_where_banned),
+        test(remove_user_from_room_when_exiting),
+        test(remove_user_from_room),
     };
 
     for (int i = 0; i < TEST_COUNT && tests[i] != NULL; ++i)

@@ -43,21 +43,29 @@ room_add_user(room_t *room, user_t * const user, int is_admin) {
         vec_add(room->admins, user);
     }
 
+    // add room to user's rooms
+    vec_add(user->rooms, room);
+
     char buf[SYSMSG_BUF_SIZE] = {0};
-    snprintf(buf, SYSMSG_BUF_SIZE, "* * * <%s> joined #%s.\n", user->username, room->name);
+    snprintf(buf, SYSMSG_BUF_SIZE, "#%s * * * <%s> joined.\n", user->username, room->name);
     return broadcast(room, buf);
 }
 
 cr_t
 room_remove_user(room_t *room, user_t * const user) {
+    // broadcast user leaving
+    char buf[SYSMSG_BUF_SIZE] = {0};
+    snprintf(buf, SYSMSG_BUF_SIZE, "#%s * * * <%s> is leaving...\n", room->name, user->username);
+    cr_t res = broadcast(room, buf);
+
     // remove user from
     vec_remove(room->users, user);
     vec_remove(room->admins, user);
     vec_remove(room->banned, user);
+    // remove room from user's list
+    vec_remove(user->rooms, room);
 
-    char buf[SYSMSG_BUF_SIZE] = {0};
-    snprintf(buf, SYSMSG_BUF_SIZE, "* * * <%s> is leaving #%s\n", user->username, room->name);
-    return broadcast(room, buf);
+    return res;
 }
 
 cr_t
