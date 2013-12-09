@@ -26,6 +26,9 @@
 #define CMD_LEAVE 5
 #define CMD_MSG   6
 #define CMD_GRANT 7
+#define CMD_MUTE  8
+#define CMD_VOICE 9
+#define CMD_KICK 10
 
 #define CMD_RES_NOT_INIT      0
 #define CMD_RES_OK          100

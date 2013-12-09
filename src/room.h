@@ -15,4 +15,10 @@ cr_t room_send_msg(room_t * const, user_t * const, string msg);
 
 cr_t room_admin(room_t* const, user_t* const, string);
 
+cr_t room_mute_user(room_t* const, user_t* const, string);
+
+cr_t room_voice_user(room_t* const, user_t* const, string);
+
+cr_t room_kick_user(room_t* const, user_t* const, string);
+
 #endif

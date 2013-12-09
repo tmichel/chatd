@@ -94,7 +94,7 @@ room_send_msg(room_t * const room, user_t * const user, string msg) {
 cr_t
 room_admin(room_t* const room, user_t* const admin, string username) {
     // check if user has rights to do this
-    if (!vec_contains(room->admins, admin)) {
+    if (!is_admin(room, admin)) {
         return cr_create(CMD_RES_NOT_ALLOWED);
     }
 
@@ -110,6 +110,21 @@ room_admin(room_t* const room, user_t* const admin, string username) {
     char buf[MAX_MESSAGE_SIZE] = {0};
     snprintf(buf, MAX_MESSAGE_SIZE, "#%s * * * %s was granted admin rights.\n", room->name, user->username);
     return broadcast(room, buf);
+}
+
+cr_t
+room_mute_user(room_t* const room, user_t* const admin, string username) {
+    return cr_create(CMD_RES_ERR);
+}
+
+cr_t
+room_voice_user(room_t* const room, user_t* const admin, string username) {
+    return cr_create(CMD_RES_ERR);
+}
+
+cr_t
+room_kick_user(room_t* const room, user_t* const admin, string username) {
+    return cr_create(CMD_RES_ERR);
 }
 
 static cr_t
