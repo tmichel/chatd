@@ -12,6 +12,7 @@ static cr_t broadcast(room_t * const, char *);
 static int is_admin(room_t * const, user_t * const);
 static int admin_prep(room_t* const, user_t* const, string, cr_t*, user_t**);
 static cr_t remove_user(room_t* const, user_t* const, char*);
+static void sys_msg(char*, room_t* const, user_t* const, const char*);
 
 room_t*
 room_new(const char *name) {
@@ -50,7 +51,10 @@ room_add_user(room_t *room, user_t * const user, int admin) {
     vec_add(user->rooms, room);
 
     char buf[SYSMSG_BUF_SIZE] = {0};
-    snprintf(buf, SYSMSG_BUF_SIZE, "#%s * * * <%s> joined.\n", room->name, user->username);
+    sys_msg(buf, room, user, "joined");
+    broadcast(room, buf);
+
+    sys_msg(buf, room, user, "is an admin");
     return broadcast(room, buf);
 }
 
@@ -58,7 +62,7 @@ cr_t
 room_remove_user(room_t *room, user_t * const user) {
     // broadcast user leaving
     char buf[SYSMSG_BUF_SIZE] = {0};
-    snprintf(buf, SYSMSG_BUF_SIZE, "#%s * * * <%s> is leaving...\n", room->name, user->username);
+    sys_msg(buf, room, user, "is leaving..");
 
     return remove_user(room, user, buf);
 }
@@ -96,8 +100,8 @@ room_admin(room_t* const room, user_t* const admin, string username) {
     // grant admin rights
     vec_add(room->admins, user);
 
-    char buf[MAX_MESSAGE_SIZE] = {0};
-    snprintf(buf, MAX_MESSAGE_SIZE, "#%s * * * %s was granted admin rights.\n", room->name, user->username);
+    char buf[SYSMSG_BUF_SIZE] = {0};
+    sys_msg(buf, room, user, "was granted admin rights");
     return broadcast(room, buf);
 }
 
@@ -111,8 +115,8 @@ room_mute_user(room_t* const room, user_t* const admin, string username) {
 
     vec_add(room->muted, user);
 
-    char buf[MAX_MESSAGE_SIZE] = {0};
-    snprintf(buf, MAX_MESSAGE_SIZE, "#%s * * * %s was muted by %s.\n", room->name, user->username, admin->username);
+    char buf[SYSMSG_BUF_SIZE];
+    sys_msg(buf, room, user, "was muted");
     return broadcast(room, buf);
 }
 
@@ -126,8 +130,8 @@ room_voice_user(room_t* const room, user_t* const admin, string username) {
 
     vec_remove(room->muted, user);
 
-    char buf[MAX_MESSAGE_SIZE] = {0};
-    snprintf(buf, MAX_MESSAGE_SIZE, "#%s * * * %s can speak again.\n", room->name, user->username);
+    char buf[SYSMSG_BUF_SIZE] = {0};
+    sys_msg(buf, room, user, "can spean again");
     return broadcast(room, buf);
 }
 
@@ -140,7 +144,7 @@ room_kick_user(room_t* const room, user_t* const admin, string username) {
     }
 
     char buf[SYSMSG_BUF_SIZE];
-    snprintf(buf, SYSMSG_BUF_SIZE, "#%s * * * <%s> was kicked by %s.\n", room->name, user->username, admin->username);
+    sys_msg(buf, room, user, "was kicked out");
     return remove_user(room, user, buf);
 }
 
@@ -203,4 +207,10 @@ remove_user(room_t* const room, user_t* const user, char* msg) {
     vec_remove(user->rooms, room);
 
     return res;
+}
+
+static void
+sys_msg(char* dest, room_t* const room, user_t* const user, const char* msg) {
+    snprintf(dest, SYSMSG_BUF_SIZE, "#%s * * * <%s> %s.\n",
+        room->name, user->username, msg);
 }
