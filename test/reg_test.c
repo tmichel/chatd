@@ -5,6 +5,7 @@
 #include "../src/command.h"
 #include "../src/mem.h"
 #include "../src/const.h"
+#include "../src/db.h"
 
 #define TEST_COUNT 100
 
@@ -57,9 +58,13 @@ int main() {
 
     for (int i = 0; i < TEST_COUNT && tests[i] != NULL; ++i)
     {
+        db_init(":memory:");
+
         test_t *t = tests[i];
         t->t(t);
         eval(t);
+
+        db_fini();
     }
 
     print_stats(tests, TEST_COUNT);

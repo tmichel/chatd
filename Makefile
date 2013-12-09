@@ -41,7 +41,7 @@ $(TESTOUTDIR):
 	@mkdir -p $(TESTOUTDIR)
 
 $(TEST_O): $(TESTOUTDIR)/% : $(TESTDIR)/%.c
-	cc $(CFLAGS) $(OBJS) test/assert.c $< -o $@
+	cc $(CFLAGS) $(OBJS) test/assert.c $< $(LIBS) -o $@
 
 test: test-compile test-run
 

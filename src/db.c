@@ -6,7 +6,7 @@
 #include <sqlite3.h>
 #include <string.h>
 
-sqlite3 *db;
+sqlite3 *db = NULL;
 
 int
 db_init(char *uri) {
@@ -20,6 +20,20 @@ db_init(char *uri) {
         return 1;
     }
 
+    /* Create tables */
+    const char *sql = "CREATE TABLE IF NOT EXISTS users ("
+        "id INTEGER PRIMARY KEY,"
+        "username VARCHAR(255) NOT NULL UNIQUE,"
+        "password VARCHAR(255) NOT NULL"
+    ");"
+    "CREATE TABLE IF NOT EXISTS chat_log ("
+        "id INTEGER PRIMARY KEY,"
+        "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,"
+        "room VARCHAR(255) NOT NULL,"
+        "message TEXT"
+    ");";
+
+    sqlite3_exec(db, sql, 0, 0, 0);
     return 0;
 }
 
@@ -34,7 +48,7 @@ db_get_user(string username) {
     int rc = sqlite3_prepare_v2(db, "SELECT username, password FROM users WHERE username = ?", -1, &stmt, NULL);
 
     if (rc != SQLITE_OK) {
-        log_sys(LOG_ERR, "Could not created prepared statement."),
+        log_sys(LOG_ERR, "Could not created prepared statement: %s", sqlite3_errmsg(db)),
         sqlite3_finalize(stmt);
         return NULL;
     }
@@ -61,7 +75,7 @@ db_store_user(const user_t *user) {
     int rc = sqlite3_prepare_v2(db, "INSERT INTO users(username, password) values (?, ?)", -1, &stmt, NULL);
 
     if (rc != SQLITE_OK) {
-        log_sys(LOG_ERR, "Could not created prepared statement."),
+        log_sys(LOG_ERR, "Could not created prepared statement: %s", sqlite3_errmsg(db)),
         sqlite3_finalize(stmt);
         return db_prepare_stmt_err;
     }
@@ -91,7 +105,7 @@ db_log_msg(const room_t *room, const char *msg) {
     int rc = sqlite3_prepare_v2(db, "INSERT INTO chat_log(room, message) values (?, ?)", -1, &stmt, NULL);
 
     if (rc != SQLITE_OK) {
-        log_sys(LOG_ERR, "Could not created prepared statement."),
+        log_sys(LOG_ERR, "Could not created prepared statement: %s", sqlite3_errmsg(db)),
         sqlite3_finalize(stmt);
         return db_prepare_stmt_err;
     }

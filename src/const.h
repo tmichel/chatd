@@ -41,5 +41,6 @@
 #define CMD_RES_NO_CMD      107
 #define CMD_RES_USR_DUP     108
 #define CMD_RES_NOT_ALLOWED 109
+#define CMD_RES_INV_PWD     110
 
 #endif

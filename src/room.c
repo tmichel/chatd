@@ -3,6 +3,7 @@
 #include "command.h"
 #include "user.h"
 #include "log.h"
+#include "db.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -168,7 +169,12 @@ broadcast(room_t * const room, char* message) {
         }
     }
 
-    // TODO: write into chatlog
+    // log message to db
+    string msg = str_new(message);
+    string trim = str_trim(msg);
+    db_log_msg(room, trim.val);
+    str_destroy(msg);
+    str_destroy(trim);
 
     if (err == 0) {
         return cr_ok();

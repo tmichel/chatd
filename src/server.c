@@ -31,6 +31,7 @@ char *RES_MSG[20] = {
     /* 107 */ "NO SUCH COMMAND",
     /* 108 */ "USER NAME NOT AVAILABLE",
     /* 109 */ "NOT ALLOWED",
+    /* 110 */ "INVALID PASSWORD",
 };
 
 /**
@@ -173,8 +174,10 @@ handle_conn(void *arg) {
         memset(buf, 0, len);
     }
 
-    user_quit(user);
-    user_free(user);
+    if (user != NULL) {
+        user_quit(user);
+    }
+
     log_sys(LOG_INFO, "Client exited.");
     close(client_sock);
 
@@ -207,4 +210,5 @@ user_quit(user_t *user) {
         }
     }
     mem_remove_user(user);
+    user_free(user);
 }

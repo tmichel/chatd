@@ -30,6 +30,7 @@ void
 user_free(user_t *user) {
     vec_free(user->rooms);
     free(user->username);
+    free(user->password);
     free(user);
 }
 

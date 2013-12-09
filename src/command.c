@@ -7,6 +7,7 @@
 #include "mem.h"
 #include "user.h"
 #include "room.h"
+#include "db.h"
 
 struct room_req {
     command_t cmd;
@@ -26,6 +27,7 @@ static void cmd_voice(struct room_req);
 static void cmd_kick(struct room_req);
 static cr_t cmd_msg(command_t cmd, user_t* const user);
 static cr_t exec_room_cmd(command_t cmd, user_t* const user, void (*f)(struct room_req));
+static user_t* login(string, string, cr_t*);
 
 command_t
 command_new(cc_t code, string args) {
@@ -97,6 +99,7 @@ command_execute(command_t cmd, user_t * const user) {
 /* User registration. */
 static cr_t
 cmd_reg(command_t cmd) {
+    cr_t res = cr_ok();
     tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
 
     string username = str_tok(&tok, SEP_EXCL);
@@ -119,25 +122,16 @@ cmd_reg(command_t cmd) {
     }
 
     if (lookup_res == MEM_NOTFOUND) {
-        // password was specified. login or register
-        if (!str_is_nil(password) && !str_is_empty(password)) {
-            // TODO: lookup from persistent store and authenticate
-            // user = ...
-
-            // atm we dont have a persistent store, so create a new user
-            printf("Registering with password.");
-            user = user_new_with_name(username.val);
-        } else {
-            user = user_new_with_name(username.val);
+        user = login(username, password, &res);
+        if (user != NULL) {
+            mem_store_user(user);
         }
-        mem_store_user(user);
     }
 
     // cleanup and return
     str_destroy(username);
     str_destroy(password);
-    cr_t res = cr_ok();
-    res.user = user; // newly created user
+    res.user = user; // newly created user or NULL
     return res;
 }
 
@@ -257,4 +251,41 @@ cmd_kick(struct room_req req) {
     string username = str_tok_rest(req.tok);
     *req.res = room_kick_user(req.room, req.user, username);
     str_destroy(username);
+}
+
+static user_t*
+login(string username, string password, cr_t *res) {
+    user_t* user = db_get_user(username);
+
+    // password was specified. login or register
+    if (!str_is_nil(password) && !str_is_empty(password)) {
+        // no user found with that name. register user
+        if (user == NULL) {
+            user = user_new_with_name(username.val);
+            user->password = strdup(password.val);
+            if (db_store_user(user) == db_ok) {
+               return user;
+            } else {
+                // there is a user with this name in the database
+                // name must be unique
+                user_free(user);
+                res->code = CMD_RES_USR_DUP;
+                return NULL;
+            }
+        }
+
+        // there is a user, try to authenticate
+        if (strcmp(user->password, password.val) != 0) {
+            user_free(user);
+            res->code = CMD_RES_INV_PWD;
+            user = NULL;
+        }
+    } else if (user != NULL) {
+        res->code = CMD_RES_USR_DUP;
+        user_free(user);
+        user = NULL;
+    } else {
+        user = user_new_with_name(username.val);
+    }
+    return user;
 }
