@@ -16,17 +16,17 @@ struct room_req {
     cr_t *res;
 };
 
-static cr_t user_reg(command_t cmd);
-static cr_t user_join(command_t cmd, user_t* const user);
-static void user_leave(struct room_req);
-static void user_talk(struct room_req);
-static void user_grant(struct room_req);
-static void user_mute(struct room_req);
-static void user_voice(struct room_req);
-static void user_kick(struct room_req);
-static cr_t user_exit(command_t cmd, user_t* const user);
-static cr_t user_msg(command_t cmd, user_t* const user);
-static cr_t exec_room(command_t cmd, user_t* const user, void (*f)(struct room_req));
+static cr_t cmd_reg(command_t cmd);
+static cr_t cmd_join(command_t cmd, user_t* const user);
+static void cmd_leave(struct room_req);
+static void cmd_talk(struct room_req);
+static void cmd_grant(struct room_req);
+static void cmd_mute(struct room_req);
+static void cmd_voice(struct room_req);
+static void cmd_kick(struct room_req);
+static cr_t cmd_exit(command_t cmd, user_t* const user);
+static cr_t cmd_msg(command_t cmd, user_t* const user);
+static cr_t exec_room_cmd(command_t cmd, user_t* const user, void (*f)(struct room_req));
 
 command_t
 command_new(cc_t code, string args) {
@@ -73,25 +73,25 @@ command_execute(command_t cmd, user_t * const user) {
 
     switch (cmd.code) {
     case CMD_REG:
-        return user_reg(cmd);
+        return cmd_reg(cmd);
     case CMD_JOIN:
-        return user_join(cmd, user);
+        return cmd_join(cmd, user);
     case CMD_TALK:
-        return exec_room(cmd, user, user_talk);
+        return exec_room_cmd(cmd, user, cmd_talk);
     case CMD_LEAVE:
-        return exec_room(cmd, user, user_leave);
+        return exec_room_cmd(cmd, user, cmd_leave);
     case CMD_EXIT:
-        return user_exit(cmd, user);
+        return cmd_exit(cmd, user);
     case CMD_MSG:
-        return user_msg(cmd, user);
+        return cmd_msg(cmd, user);
     case CMD_GRANT:
-        return exec_room(cmd, user, user_grant);
+        return exec_room_cmd(cmd, user, cmd_grant);
     case CMD_MUTE:
-        return exec_room(cmd, user, user_mute);
+        return exec_room_cmd(cmd, user, cmd_mute);
     case CMD_VOICE:
-        return exec_room(cmd, user, user_voice);
+        return exec_room_cmd(cmd, user, cmd_voice);
     case CMD_KICK:
-        return exec_room(cmd, user, user_kick);
+        return exec_room_cmd(cmd, user, cmd_kick);
     }
 
     return cr_create(CMD_RES_NO_CMD);
@@ -99,7 +99,7 @@ command_execute(command_t cmd, user_t * const user) {
 
 /* User registration. */
 static cr_t
-user_reg(command_t cmd) {
+cmd_reg(command_t cmd) {
     tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
 
     string username = str_tok(&tok, SEP_EXCL);
@@ -149,7 +149,7 @@ params:
     user: the user who will join the room
     cmd: the actual command*/
 static cr_t
-user_join(command_t cmd, user_t * const user) {
+cmd_join(command_t cmd, user_t * const user) {
     cr_t res = cr_create(CMD_RES_ERR);
     tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
     string room_name = str_tok(&tok, SEP_EXCL);
@@ -178,14 +178,14 @@ user_join(command_t cmd, user_t * const user) {
 }
 
 static void
-user_talk(struct room_req req) {
+cmd_talk(struct room_req req) {
     string message = str_tok_rest(req.tok);
     *req.res = room_send_msg(req.room, req.user, message);
     str_destroy(message);
 }
 
 static cr_t
-user_exit(command_t cmd, user_t * const user) {
+cmd_exit(command_t cmd, user_t * const user) {
     cr_t res = cr_ok();
 
     // remove user from every room she's in.
@@ -209,7 +209,7 @@ user_exit(command_t cmd, user_t * const user) {
 }
 
 static void
-user_leave(struct room_req req) {
+cmd_leave(struct room_req req) {
     *req.res = room_remove_user(req.room, req.user);
 
     if (vec_is_empty(req.room->users)) {
@@ -218,7 +218,7 @@ user_leave(struct room_req req) {
 }
 
 static cr_t
-user_msg(command_t cmd, user_t * const sender) {
+cmd_msg(command_t cmd, user_t * const sender) {
     cr_t res = cr_empty();
     tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
     user_t *receiver = NULL;
@@ -239,14 +239,14 @@ user_msg(command_t cmd, user_t * const sender) {
 }
 
 static void
-user_grant(struct room_req req) {
+cmd_grant(struct room_req req) {
     string username = str_tok_rest(req.tok);
     *req.res = room_admin(req.room, req.user, username);
     str_destroy(username);
 }
 
 static cr_t
-exec_room(command_t cmd, user_t* const user, void (*exec)(struct room_req)) {
+exec_room_cmd(command_t cmd, user_t* const user, void (*exec)(struct room_req)) {
     cr_t res = cr_empty();
     tok_t tok = str_tok_init(COMMAND_DELIM, cmd.args);
     room_t *room = NULL;
@@ -266,21 +266,21 @@ exec_room(command_t cmd, user_t* const user, void (*exec)(struct room_req)) {
 }
 
 static void
-user_mute(struct room_req req) {
+cmd_mute(struct room_req req) {
     string username = str_tok_rest(req.tok);
     *req.res = room_mute_user(req.room, req.user, username);
     str_destroy(username);
 }
 
 static void
-user_voice(struct room_req req) {
+cmd_voice(struct room_req req) {
     string username = str_tok_rest(req.tok);
     *req.res = room_voice_user(req.room, req.user, username);
     str_destroy(username);
 }
 
 static void
-user_kick(struct room_req req) {
+cmd_kick(struct room_req req) {
     string username = str_tok_rest(req.tok);
     *req.res = room_kick_user(req.room, req.user, username);
     str_destroy(username);
