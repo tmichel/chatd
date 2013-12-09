@@ -49,3 +49,11 @@ user_message(user_t* const sender, user_t* const receiver, string message) {
     free(msg);
     return res;
 }
+
+int
+user_eq(any_t name, any_t user) {
+    char *username = (char*)name;
+    user_t *u = (user_t*)user;
+
+    return strcmp(username, u->username) == 0;
+}

@@ -4,11 +4,11 @@
 #include "vec.h"
 #include "const.h"
 #include "room.h"
+#include "user.h"
 
 vec_t *users = NULL;
 vec_t *rooms = NULL;
 
-static int user_eq(any_t, any_t);
 static int room_eq(any_t, any_t);
 
 void
@@ -67,14 +67,6 @@ mem_lookup_room(const char *room_name, room_t **room) {
 
     *room = r;
     return MEM_OK;
-}
-
-static int
-user_eq(any_t name, any_t user) {
-    char *username = (char*)name;
-    user_t *u = (user_t*)user;
-
-    return strcmp(username, u->username) == 0;
 }
 
 static int
