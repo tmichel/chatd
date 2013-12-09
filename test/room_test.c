@@ -43,15 +43,15 @@ void talk_in_room_when_user_is_not_in(test_t *t) {
     room_free(room);
 }
 
-void talk_in_room_where_banned(test_t *t) {
+void talk_in_room_where_muted(test_t *t) {
     room_t *room = room_new("test");
     user_t *user = user_new();
 
-    vec_add(room->banned, user);
+    vec_add(room->muted, user);
 
     cr_t res = room_send_msg(room, user, str_new("hello"));
 
-    assert_eq_int(t, CMD_RES_USR_BND, res.code);
+    assert_eq_int(t, CMD_RES_USR_MUTE, res.code);
     user_free(user);
     room_free(room);
 }
@@ -133,18 +133,53 @@ void trying_to_grand_admin_right_to_user_not_in_the_room(test_t *t) {
 
 }
 
-int main()
-{
+void kick_user_without_admin_rights(test_t *t) {
+    room_t *room = room_new("room");
+    user_t *not_admin = user_new_with_name("not_admin");
+
+    cr_t res = room_kick_user(room, not_admin, str_nil());
+
+    assert_eq_int(t, CMD_RES_NOT_ALLOWED, res.code);
+}
+
+void kick_user_not_in_room(test_t *t) {
+    room_t *room = room_new("room");
+    user_t *admin = user_new_with_name("admin");
+    vec_add(room->admins, admin);
+
+    cr_t res = room_kick_user(room, admin, str_new("non-exsistent"));
+    assert_eq_int(t, CMD_RES_NO_USR, res.code);
+}
+
+void kick_user(test_t *t) {
+    room_t *room = room_new("room");
+    user_t *admin = user_new_with_name("admin");
+    admin->sock = 1;
+    user_t *user = user_new_with_name("user");
+    user->sock = 1;
+    vec_add(room->users, user);
+    vec_add(room->users, admin);
+    vec_add(room->admins, admin);
+
+    cr_t res = room_kick_user(room, admin, str_new(user->username));
+
+    assert_eq_int(t, CMD_RES_OK, res.code);
+}
+
+int main() {
     test_t *tests[TEST_COUNT] = {
         test(add_user_to_room),
         test(add_user_to_room_as_admin),
         test(talk_in_room_when_user_is_not_in),
-        test(talk_in_room_where_banned),
+        test(talk_in_room_where_muted),
         test(remove_user_from_room_when_exiting),
         test(remove_user_from_room),
         test(grant_admin_rights),
         test(trying_to_grant_admin_right_without_being_an_admin),
         test(trying_to_grand_admin_right_to_user_not_in_the_room),
+        test(kick_user_without_admin_rights),
+        test(kick_user_not_in_room),
+        test(kick_user),
     };
 
     for (int i = 0; i < TEST_COUNT && tests[i] != NULL; ++i)

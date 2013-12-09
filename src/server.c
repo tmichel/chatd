@@ -20,7 +20,7 @@ char *RES_MSG[20] = {
     /* 100 */ "OK",
     /* 101 */ "ERR",
     /* 102 */ "NO SUCH USER",
-    /* 103 */ "USER BANNED",
+    /* 103 */ "USER MUTED",
     /* 104 */ "NO_SUCH ROOM",
     /* 105 */ "WRITE ERR",
     /* 106 */ "PARSE ERR",

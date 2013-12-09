@@ -34,7 +34,7 @@
 #define CMD_RES_OK          100
 #define CMD_RES_ERR         101
 #define CMD_RES_NO_USR      102
-#define CMD_RES_USR_BND     103 // banned
+#define CMD_RES_USR_MUTE    103
 #define CMD_RES_NO_ROOM     104
 #define CMD_RES_WRT_ERR     105
 #define CMD_RES_PARSE_ERR   106

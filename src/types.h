@@ -20,7 +20,7 @@ typedef struct __room {
     char *name;
     vec_t *admins;
     vec_t *users;
-    vec_t *banned;
+    vec_t *muted;
 } room_t;
 
 /**********************************************************/
