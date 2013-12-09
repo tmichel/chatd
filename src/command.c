@@ -24,7 +24,6 @@ static void cmd_grant(struct room_req);
 static void cmd_mute(struct room_req);
 static void cmd_voice(struct room_req);
 static void cmd_kick(struct room_req);
-static cr_t cmd_exit(command_t cmd, user_t* const user);
 static cr_t cmd_msg(command_t cmd, user_t* const user);
 static cr_t exec_room_cmd(command_t cmd, user_t* const user, void (*f)(struct room_req));
 
@@ -80,8 +79,6 @@ command_execute(command_t cmd, user_t * const user) {
         return exec_room_cmd(cmd, user, cmd_talk);
     case CMD_LEAVE:
         return exec_room_cmd(cmd, user, cmd_leave);
-    case CMD_EXIT:
-        return cmd_exit(cmd, user);
     case CMD_MSG:
         return cmd_msg(cmd, user);
     case CMD_GRANT:
@@ -182,30 +179,6 @@ cmd_talk(struct room_req req) {
     string message = str_tok_rest(req.tok);
     *req.res = room_send_msg(req.room, req.user, message);
     str_destroy(message);
-}
-
-static cr_t
-cmd_exit(command_t cmd, user_t * const user) {
-    cr_t res = cr_ok();
-
-    // remove user from every room she's in.
-    room_t *r;
-    for (int i = 0; i < vec_size(user->rooms); ++i) {
-        vec_get(user->rooms, i, (any_t*)&r);
-
-        // if error occured during removing user (broadcasting message)
-        cr_t tmp = room_remove_user(r, user);
-        if (tmp.code != CMD_RES_OK) {
-            res = tmp;
-        }
-
-        if (vec_is_empty(r->users)) {
-            mem_remove_room(r);
-        }
-    }
-    mem_remove_user(user);
-
-    return res;
 }
 
 static void

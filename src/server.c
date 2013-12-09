@@ -12,6 +12,8 @@
 #include "string.h"
 #include "const.h"
 #include "user.h"
+#include "room.h"
+#include "mem.h"
 
 #define MAX_DATA_SIZE 1024
 #define MAX_RESPONSE_SIZE 100
@@ -38,6 +40,7 @@ static int handle_message(string in, user_t * user, /* out */ cr_t *res);
 static int open_serv_sock(const int port, const int max_conn);
 static void send_response(int sock, cr_t res);
 static void send_welcome(int sock);
+static void user_quit(user_t*);
 
 int start_server(const int port, const int max_conn)
 {
@@ -128,15 +131,15 @@ handle_message(string in, user_t *user, cr_t *res) {
 
     command_t cmd = parse(in);;
 
-    // execute command
-    cr_t result = command_execute(cmd, user);
-    res->code = result.code;
-    res->user = result.user;
-
     if (cmd.code == CMD_EXIT) {
+        res->code = CMD_RES_OK;
         quit = 1;
+    } else {
+        // execute command
+        cr_t result = command_execute(cmd, user);
+        res->code = result.code;
+        res->user = result.user;
     }
-
     command_destroy(cmd);
 
     return quit;
@@ -166,6 +169,7 @@ handle_conn(void *arg) {
         memset(buf, 0, len);
     }
 
+    user_quit(user);
     user_free(user);
     // TODO: sys log user exit
     printf("Client exited.\n");
@@ -183,4 +187,21 @@ send_welcome(int sock) {
     if (write(sock, msg, strlen(msg)) < 0) {
         // TODO: log error
     }
+}
+
+static void
+user_quit(user_t *user) {
+    // remove user from every room she's in.
+    room_t *r;
+    for (int i = 0; i < vec_size(user->rooms); ++i) {
+        vec_get(user->rooms, i, (any_t*)&r);
+
+        // if error occured during removing user (broadcasting message)
+        room_remove_user(r, user);
+
+        if (vec_is_empty(r->users)) {
+            mem_remove_room(r);
+        }
+    }
+    mem_remove_user(user);
 }

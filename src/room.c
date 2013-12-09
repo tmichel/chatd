@@ -52,10 +52,13 @@ room_add_user(room_t *room, user_t * const user, int admin) {
 
     char buf[SYSMSG_BUF_SIZE] = {0};
     sys_msg(buf, room, user, "joined");
-    broadcast(room, buf);
+    cr_t res = broadcast(room, buf);
 
-    sys_msg(buf, room, user, "is an admin");
-    return broadcast(room, buf);
+    if (admin) {
+        sys_msg(buf, room, user, "is an admin");
+        res = broadcast(room, buf);
+    }
+    return res;
 }
 
 cr_t
