@@ -2,6 +2,7 @@
 #include "room.h"
 #include "command.h"
 #include "user.h"
+#include "log.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -161,11 +162,13 @@ broadcast(room_t * const room, char* message) {
     for (int i = 0; i < vec_size(room->users); ++i) {
         if (vec_get(room->users, i, (any_t*)&u) == 0) {
             if (write(u->sock, message, strlen(message)) < 0) {
-                // TODO: log error
+                log_sys(LOG_ERR, "Could not send message to user.");
                 ++err;
             }
         }
     }
+
+    // TODO: write into chatlog
 
     if (err == 0) {
         return cr_ok();

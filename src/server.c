@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <netdb.h>
 
 #include "server.h"
 #include "command.h"
@@ -14,6 +15,7 @@
 #include "user.h"
 #include "room.h"
 #include "mem.h"
+#include "log.h"
 
 #define MAX_DATA_SIZE 1024
 #define MAX_RESPONSE_SIZE 100
@@ -55,19 +57,21 @@ int start_server(const int port, const int max_conn)
 
     printf("Server started on %d port, waiting for connections...\n", port);
 
-
     while(1) {
+        char ip[NI_MAXHOST];
+        char srv[NI_MAXSERV];
         int client_sock = accept(serv_sock, (struct sockaddr*)&remote_addr, &remote_addr_len);
 
+        getnameinfo((struct sockaddr*)&remote_addr, remote_addr_len, ip, sizeof(ip), srv, sizeof(srv), NI_NUMERICHOST | NI_NUMERICSERV);
+
         if (client_sock < 0) {
-            perror("Could not accept socket");
+            log_sys(LOG_ERR, "Could not accept connection from %s %s", ip, srv);
             continue;
         }
 
-        // TODO: log client info
+        log_sys(LOG_INFO, "Connection from %s:%s", ip, srv);
         pthread_t tid;
         pthread_create(&tid, NULL, handle_conn, &client_sock);
-
     }
 
     close(serv_sock);
@@ -78,7 +82,7 @@ static void
 send_response(int sock, cr_t res) {
     char *desc;
     if (res.code == CMD_RES_NOT_INIT) {
-        // TODO: log this
+        log_sys(LOG_ERR, "Command result was not initialized.");
         // something went terribly wrong, got back unitialized command result
         desc = RES_MSG[CMD_RES_ERR - CMD_RES_OK];
     } else {
@@ -89,7 +93,7 @@ send_response(int sock, cr_t res) {
     snprintf(reply, MAX_RESPONSE_SIZE, "%d %s\n", res.code, desc);
 
     if (write(sock, reply, strlen(reply)) < 0) {
-        // TODO: log error
+        log_sys(LOG_ERR, "Could not send message to user.");
     }
 }
 
@@ -99,7 +103,7 @@ open_serv_sock(const int port, const int max_conn) {
 
     /* create socket for ipv4 */
     if ((serv_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        perror("Could not create socket");
+        log_sys(LOG_ERR, "Could not create socket");
         return -1;
     }
 
@@ -118,7 +122,7 @@ open_serv_sock(const int port, const int max_conn) {
 
     // listen on port
     if ((listen(serv_sock, max_conn)) < 0) {
-        perror("Could not listen on socket");
+        log_sys(LOG_ERR, "Could not listen on socket");
         return -1;
     }
 
@@ -171,8 +175,7 @@ handle_conn(void *arg) {
 
     user_quit(user);
     user_free(user);
-    // TODO: sys log user exit
-    printf("Client exited.\n");
+    log_sys(LOG_INFO, "Client exited.");
     close(client_sock);
 
     return NULL;
@@ -185,7 +188,7 @@ send_welcome(int sock) {
                  "To register your nick send 'REG nick [password]'\n");
 
     if (write(sock, msg, strlen(msg)) < 0) {
-        // TODO: log error
+        log_sys(LOG_ERR, "Could not send message.");
     }
 }
 
