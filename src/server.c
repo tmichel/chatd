@@ -16,7 +16,7 @@
 #define MAX_DATA_SIZE 1024
 #define MAX_RESPONSE_SIZE 100
 
-char *RES_MSG[10] = {
+char *RES_MSG[20] = {
     /* 100 */ "OK",
     /* 101 */ "ERR",
     /* 102 */ "NO SUCH USER",
@@ -26,6 +26,7 @@ char *RES_MSG[10] = {
     /* 106 */ "PARSE ERR",
     /* 107 */ "NO SUCH COMMAND",
     /* 108 */ "USER NAME NOT AVAILABLE",
+    /* 109 */ "NOT ALLOWED",
 };
 
 /**

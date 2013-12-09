@@ -20,6 +20,7 @@ static cr_t user_reg(command_t cmd);
 static cr_t user_join(command_t cmd, user_t* const user);
 static void user_leave(struct room_req);
 static void user_talk(struct room_req);
+static void user_grant(struct room_req);
 static cr_t user_exit(command_t cmd, user_t* const user);
 static cr_t user_msg(command_t cmd, user_t* const user);
 static cr_t exec_room(command_t cmd, user_t* const user, void (*f)(struct room_req));
@@ -80,6 +81,8 @@ command_execute(command_t cmd, user_t * const user) {
         return user_exit(cmd, user);
     case CMD_MSG:
         return user_msg(cmd, user);
+    case CMD_GRANT:
+        return exec_room(cmd, user, user_grant);
     }
 
     return cr_create(CMD_RES_NO_CMD);
@@ -224,6 +227,13 @@ user_msg(command_t cmd, user_t * const sender) {
 
     str_destroy(uname);
     return res;
+}
+
+static void
+user_grant(struct room_req req) {
+    string username = str_tok_rest(req.tok);
+    *req.res = room_admin(req.room, req.user, username);
+    str_destroy(username);
 }
 
 static cr_t

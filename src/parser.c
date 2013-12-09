@@ -5,7 +5,7 @@
 #include "parser.h"
 #include "command.h"
 
-#define CMD_NR 7
+#define CMD_NR 8
 
 char *CMD[CMD_NR] = {
     /* 0 */ "REG",
@@ -15,6 +15,7 @@ char *CMD[CMD_NR] = {
     /* 4 */ "TALK",
     /* 5 */ "LEAVE",
     /* 6 */ "MSG",
+    /* 7 */ "GRANT",
 };
 
 static cc_t

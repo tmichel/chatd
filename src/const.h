@@ -25,16 +25,18 @@
 #define CMD_TALK  4
 #define CMD_LEAVE 5
 #define CMD_MSG   6
+#define CMD_GRANT 7
 
-#define CMD_RES_NOT_INIT    0
-#define CMD_RES_OK        100
-#define CMD_RES_ERR       101
-#define CMD_RES_NO_USR    102
-#define CMD_RES_USR_BND   103 // banned
-#define CMD_RES_NO_ROOM   104
-#define CMD_RES_WRT_ERR   105
-#define CMD_RES_PARSE_ERR 106
-#define CMD_RES_NO_CMD    107
-#define CMD_RES_USR_DUP   108
+#define CMD_RES_NOT_INIT      0
+#define CMD_RES_OK          100
+#define CMD_RES_ERR         101
+#define CMD_RES_NO_USR      102
+#define CMD_RES_USR_BND     103 // banned
+#define CMD_RES_NO_ROOM     104
+#define CMD_RES_WRT_ERR     105
+#define CMD_RES_PARSE_ERR   106
+#define CMD_RES_NO_CMD      107
+#define CMD_RES_USR_DUP     108
+#define CMD_RES_NOT_ALLOWED 109
 
 #endif

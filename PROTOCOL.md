@@ -73,3 +73,14 @@ teljesül:
 Privát üzenet küldése egy másik felhasználónak. Ezt csak a másik felhasználó
 kapja meg. Ha nincs bejelentkezett felhasználó _user_ névvel, akkor egy
 hibakódot küld vissza a szerver.
+
+### Adminisztrátori jog adása
+
+    GRANT room user
+
+Egy szobában egy felhasználónak admin jogot ad. Csak admin jogú felhasználó
+adhat ilyen jogot. A művelet meghiúsul, ha a következők egyike teljesül:
+
+* A _room_ szoba nem létezik
+* A felhasználónak nincs admin joga.
+* A _user_ felhasználó nem tagja a szobának.

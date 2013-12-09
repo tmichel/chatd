@@ -13,4 +13,6 @@ cr_t room_remove_user(room_t *room, user_t * const user);
 
 cr_t room_send_msg(room_t * const, user_t * const, string msg);
 
+cr_t room_admin(room_t* const, user_t* const, string);
+
 #endif

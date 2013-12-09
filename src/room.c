@@ -1,6 +1,7 @@
 #include "const.h"
 #include "room.h"
 #include "command.h"
+#include "user.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -37,9 +38,9 @@ room_free(room_t *room) {
 }
 
 cr_t
-room_add_user(room_t *room, user_t * const user, int is_admin) {
+room_add_user(room_t *room, user_t * const user, int admin) {
     vec_add(room->users, user);
-    if(is_admin) {
+    if(admin) {
         vec_add(room->admins, user);
     }
 
@@ -47,7 +48,7 @@ room_add_user(room_t *room, user_t * const user, int is_admin) {
     vec_add(user->rooms, room);
 
     char buf[SYSMSG_BUF_SIZE] = {0};
-    snprintf(buf, SYSMSG_BUF_SIZE, "#%s * * * <%s> joined.\n", user->username, room->name);
+    snprintf(buf, SYSMSG_BUF_SIZE, "#%s * * * <%s> joined.\n", room->name, user->username);
     return broadcast(room, buf);
 }
 
@@ -84,10 +85,31 @@ room_send_msg(room_t * const room, user_t * const user, string msg) {
     char *message = (char*)calloc(sizeof(char), sizeof(char) * MAX_MESSAGE_SIZE );
     snprintf(message, MAX_MESSAGE_SIZE, fmt, room->name, user->username, msg.val);
 
-    broadcast(room, message);
+    cr_t res = broadcast(room, message);
 
     free(message);
-    return cr_ok();
+    return res;
+}
+
+cr_t
+room_admin(room_t* const room, user_t* const admin, string username) {
+    // check if user has rights to do this
+    if (!vec_contains(room->admins, admin)) {
+        return cr_create(CMD_RES_NOT_ALLOWED);
+    }
+
+    // get user from room's users
+    user_t *user = vec_find(room->users, (any_t)username.val, user_eq);
+    if (user == NULL) {
+        return cr_create(CMD_RES_NO_USR);
+    }
+
+    // grant admin rights
+    vec_add(room->admins, user);
+
+    char buf[MAX_MESSAGE_SIZE] = {0};
+    snprintf(buf, MAX_MESSAGE_SIZE, "#%s * * * %s was granted admin rights.\n", room->name, user->username);
+    return broadcast(room, buf);
 }
 
 static cr_t
