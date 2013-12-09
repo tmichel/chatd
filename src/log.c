@@ -7,7 +7,7 @@
 #define MAX_LOG_SIZE 500
 
 /* Determnines whether to use syslog or not. */
-int on;
+int on = 0;
 
 void
 log_init(int d) {

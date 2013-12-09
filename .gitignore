@@ -1,4 +1,4 @@
 chatd
 test_ex/
 obj/
-
+*.db

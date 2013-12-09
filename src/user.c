@@ -12,6 +12,7 @@ user_new() {
     user_t* user = (user_t*)malloc(sizeof(user_t));
     user->rooms = vec_new();
     user->username = NULL;
+    user->password = NULL;
     user->sock = -1;
 
     return user;

@@ -8,6 +8,7 @@
 
 typedef struct {
     char *username;
+    char *password;
     int sock;
     vec_t *rooms;
 } user_t;
