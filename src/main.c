@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <signal.h>
 
 #include "server.h"
 #include "mem.h"
@@ -25,6 +26,8 @@ struct options {
 
 static struct options parse_opts(int argc, char *argv[]);
 static void daemonize();
+static void register_term_handler();
+static void term(int);
 
 int main(int argc, char *argv[])
 {
@@ -32,6 +35,9 @@ int main(int argc, char *argv[])
 
     if (opts.is_daemon)
         daemonize();
+
+    // register signals
+    register_term_handler();
 
     srand(time(NULL));
     mem_init();
@@ -84,12 +90,17 @@ parse_opts(int argc, char *argv[]) {
                 case 'm':
                     opts.max_conn = atoi(argv[++i]);
                     break;
+                case'b':
+                    // free the previously allocation "default" uri
+                    free(opts.db_uri);
+                    opts.db_uri = strdup(argv[++i]);
                 case '?':
                 case 'h':
-                    printf("Usage: chatd [-p PORT] [-m MAXCONN] [-d]\n");
+                    printf("Usage: chatd [-p PORT] [-m MAXCONN] [-d] [-b DBPATH]\n");
                     printf("\t-m: the maximum length of the queue of pending connections. Default value is 100.\n");
                     printf("\t-p: the port to listen on. Default: 3222\n");
-                    printf("\t-d: daemonize.");
+                    printf("\t-d: run as daemon.\n");
+                    printf("\t-b: the path of the database. Should be an absolute path when used it -d\n");
                     exit(0);
                     break;
             }
@@ -137,6 +148,23 @@ daemonize() {
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
+}
 
-    // TODO: signal handling
+static void
+term(int signum) {
+    if (signum == SIGINT || signum == SIGTERM) {
+        log_fini();
+        db_fini();
+        exit(EXIT_SUCCESS);
+    }
+}
+
+static void
+register_term_handler() {
+    struct sigaction *act = (struct sigaction*)malloc(sizeof(struct sigaction));
+    memset(act, 0, sizeof(struct sigaction));
+    act->sa_handler = term;
+
+    sigaction(SIGINT, act, NULL);
+    sigaction(SIGTERM, act, NULL);
 }

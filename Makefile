@@ -24,7 +24,7 @@ $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
-obj/main.o:
+obj/main.o: src/main.c
 	cc $(CFLAGS) -c src/main.c -o obj/main.o
 
 .PHONY: clean
