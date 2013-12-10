@@ -101,6 +101,7 @@ parse_opts(int argc, char *argv[]) {
                     printf("\t-p: the port to listen on. Default: 3222\n");
                     printf("\t-d: run as daemon.\n");
                     printf("\t-b: the path of the database. Should be an absolute path when used it -d\n");
+                    printf("\t-?, h: prints this message\n");
                     exit(0);
                     break;
             }
