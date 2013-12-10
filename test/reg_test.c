@@ -49,11 +49,23 @@ void test_user_reg_twice(test_t *t) {
     command_destroy(cmd2);
 }
 
+void test_user_register_twice_during_same_session(test_t *t) {
+    mem_init();
+    command_t cmd1 = command_new(CMD_REG, str_new("test"));
+    command_t cmd2 = command_new(CMD_REG, str_new("test2"));
+
+    cr_t res1 = command_execute(cmd1, NULL);
+    cr_t res2 = command_execute(cmd2, res1.user);
+
+    assert_eq_int(t, CMD_RES_ERR, res2.code);
+}
+
 int main() {
     test_t *tests[TEST_COUNT] = {
         test(test_user_reg_without_password),
         test(test_user_reg_with_without_args),
         test(test_user_reg_twice),
+        test(test_user_register_twice_during_same_session),
     };
 
     for (int i = 0; i < TEST_COUNT && tests[i] != NULL; ++i)

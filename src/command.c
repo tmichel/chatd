@@ -67,6 +67,11 @@ command_execute(command_t cmd, user_t * const user) {
         return cr_parse_err();
     }
 
+    // user tries to re-register
+    if (cmd.code == CMD_REG && user != NULL) {
+        return cr_create(CMD_RES_ERR);
+    }
+
     // everything needs a user except REG
     if (cmd.code != CMD_REG && user == NULL) {
         return cr_create(CMD_RES_NO_USR);
