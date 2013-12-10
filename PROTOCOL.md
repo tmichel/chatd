@@ -84,3 +84,29 @@ adhat ilyen jogot. A művelet meghiúsul, ha a következők egyike teljesül:
 * A _room_ szoba nem létezik
 * A felhasználónak nincs admin joga.
 * A _user_ felhasználó nem tagja a szobának.
+
+### Adminisztrátori parancsok
+
+#### Felhasználó eltávolítása egy szobából
+
+    KICK room user
+
+Ez a parancs csak akkor hajtható végre, ha az adott szobában adminisztrátori
+joggal rendelkezünk. Sikeres lefutás esetén a felhasználót időlegesen
+eltávolítja a szobából. Sikertelen végrehajtás esetén egy hibakódot kapunk
+vissza.
+
+#### Felhasználó elnémítása
+
+Ez egy parancs páros `MUTE` és `VOICE`. Az előbbi elhallgattat egy felhasználót.
+Ilyenkor a felhasználó még láthatja, ami a szobában folyik, de nem szólhat
+hozzá. Az utóbbi visszaadja egy felhasználó beszéd jogát.
+
+A felhasználók a szobához való csatlakozáskor mindig automatikusan beszédjogot
+kapnak.
+
+    MUTE room user
+    VOICE room user
+
+Ez a parancs csak akkor hajtható végre, ha az adott szobában adminisztrátori
+joggal rendelkezünk.
