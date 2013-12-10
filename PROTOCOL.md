@@ -34,6 +34,8 @@ Kilép a felhasználó. Minden csatornáról kiléptetjük.
 
 ### Jelszó csere/létrehozás
 
+**!! Ez nincs implementálva.**
+
     PWD new [old]
 
 Jelszó csere. Amennyiben a felhasználó csak ideiglenes és nincs még jelszava a
