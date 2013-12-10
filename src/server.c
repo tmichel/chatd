@@ -56,8 +56,6 @@ int start_server(const int port, const int max_conn)
     struct sockaddr_in remote_addr;
     socklen_t remote_addr_len = sizeof(remote_addr);
 
-    printf("Server started on %d port, waiting for connections...\n", port);
-
     while(1) {
         char ip[NI_MAXHOST];
         char srv[NI_MAXSERV];
